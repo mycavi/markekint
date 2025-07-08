@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>La página no fue encontrada</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;800&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?family=FontAwesome&display=swap" rel="stylesheet preload">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main_container row align-items-center">
+            <div class="col__left col-12 col-lg-5 offset-lg-1 py-4">
+                <h1 class="error-title">¡Oops!</h1>
+                <h2 class="error-title">Esta página decidió tomarse un descanso.</h2>
+                <p class="">Pero tú puedes seguir navegando sin problema.</p>
+                <a class="btn btn-main" href={Astro.url.origin}>Inicio</a>
+            </div>
+            <div class="col__right col-12 col-lg-6 text-center">
+                <img src="https://mycavi.com/public/404.gif" alt="404 Error" class="img_page img-fluid">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<style>
+    body{ font-size: 16px; }
+    h1, h2, p{ font-family: "Poppins", sans-serif; }
+    h1{ font-weight: 800; }
+    .error-title{
+        font-size: 2rem;
+        margin: 20px 0;
+        color: #7c7c7c;
+    }
+    .btn-main,.btn-main:hover{
+        color: #FFFFFF;
+        background: #000000;
+    }
+    .btn{
+        display: inline-block;
+        text-decoration: none;
+        padding: 7px 25px;
+        border-radius: 5px;
+        border: 0;
+    }
+    @media screen and (max-width: 992px) {
+        .col__left{ text-align: center; }  
+        .img_page{ max-width: 500px; width: 100%;}
+    }
+    @media screen and (min-width: 992px) {
+        .error-title{ font-size: 3rem; } 
+        .main_container{
+            align-items:center;
+            min-height: 100vh;
+        }
+    }
+</style>

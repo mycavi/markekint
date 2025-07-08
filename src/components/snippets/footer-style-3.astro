@@ -1,0 +1,49 @@
+---
+// Style: Clásico
+const {site, config, menu, network } = Astro.props;
+const year = new Date().getFullYear();
+const footerStyle = site.settings.snippet.footer;
+const logo = site.extra_logo || site.logo_site;
+const footerText = site.settings.snippet.footer_text;
+---
+<div class={`footer__top footer__bg ${footerStyle}--top`}>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-3">
+                <img src={logo} class="img-fluid mb-4" width="190" alt={config.app_name} loading="lazy"/>
+            </div>
+            <div class={`${footerStyle}--menu-box col-12`}>
+                <ul class={`footer__menu ${footerStyle}--menu`} set:html={menu}></ul>
+                <ul id="footer__network" class={`footer__network ${footerStyle}--network`} set:html={network.items}></ul>
+            </div>
+            {footerText && (
+                <div class="col-12">
+                    <h5 class="footer_ttl">Contáctanos</h5>
+                    <div set:html={footerText} />
+                </div>
+            )}
+        </div>
+    </div>
+</div>
+
+<div class={`footer__bottom ${footerStyle}--bottom container-fluid`}>
+    <div class="row py-2 d-flex align-items-center text-white">
+        <div class="col-md-7 offset-md-1 copy">
+            <span>© {year} Todos los Derechos Reservados MyCavi</span>
+        </div>
+        <div class="col-md-3 offset-md-1 link_mycavi">
+            <a href={`https://mycavi.com?referer=${site.code_site}`} target="_blank" class="link_white" > Powered by MyCavi </a>
+        </div>
+    </div>
+</div>
+
+<style is:global>
+.footer-style-3--top { text-align: center; padding: 45px 0 22px; }
+.footer-style-3--menu .item_footer{ margin: 5px 25px; text-transform: uppercase; }
+.footer-style-3--network{margin: 18px 0 !important; }
+.footer-style-3--network .footer__network_li{ display: inline-block; margin: 8px 15px; }
+.footer-style-3--menu .link_footer{font-weight: 500;}
+@media screen and (min-width: 991px){
+  .footer-style-3--menu .item_footer { display: inline-block; }
+}
+</style>

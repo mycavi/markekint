@@ -1,0 +1,60 @@
+---
+import axios from 'axios';
+import { config } from '../../server/js/config.js';
+import Layout from "../../layouts/Layout.astro";
+import SeoMeta from "../../components/SeoMeta.astro";
+
+const { active_user } = Astro.locals;
+const dynamicKey = Astro.cookies.get("dinamic_key")?.value;
+
+const url = new URL(Astro.request.url);
+const pathSegments = url.pathname.replace(/^\/coleccion\//, '').split('/');
+const acceso = url.searchParams.get("acceso");
+
+const [ slug , order = 'predeterminado', view = '24', page = '1' ] = pathSegments;
+const dataPost = { token: dynamicKey,slug, order, show: view, page };
+if (active_user) {
+  dataPost.customer_token = Astro.cookies.get("customer")?.value;
+}
+if (acceso) {
+  dataPost.token_collection = acceso;
+}
+const filters = { slug, order, show: view, page };
+
+let data;
+let page_seo ={}
+let title = "Colección"
+try {
+  const response = await axios.post(`${config.api_url}/products/collections`, dataPost);
+  if(response.data.collection.description && (response.data.result && response.data.total > 0)){
+    data = response.data;
+    page_seo = {
+      seo_description : data.collection.description_seo,
+      seo_keywords : data.collection.keywords
+    }
+    title = data.collection.description;
+  }
+} catch (error) {
+  console.error('Error al obtener colección:', error);
+}
+---
+<Layout title={title}>
+    <SeoMeta slot="seo" page={page_seo}/>
+    <div class="container">
+        <div class="row align-items-center pt-3">
+            <div class="col-12">
+                <h1 class="secondary-font color-mycavi mb-4" data-aos="flip-up">{title}</h1>
+            </div>
+        </div>
+        <div id="filter_box_top" class="filter_box filter_box--top" data-aos="flip-up"> </div>
+        <hr>
+        <div id="products_box" class="row"></div>
+        <hr>
+        <div id="filter_box_bottom" class="filter_box filter_box--bottom mb-4" data-aos="flip-up"></div>
+    </div>
+</Layout>
+
+<Fragment slot="scripts">
+  <script type="application/json" id="filters-data" set:html={JSON.stringify({ data, filters })}></script>
+  <script type="module" src={`/js/page-collection.js`}></script>
+</Fragment>

@@ -1,0 +1,21 @@
+---
+const { site } = Astro.locals;
+const { page } = Astro.props;
+
+const seoDesc = page?.seo_description ?? site?.seo_description;
+const seoKey = page?.seo_keywords ?? site?.seo_keywords;
+const seoImage = page?.seo_image || (site?.seo_image ? `https://mycavi.com/public/${site.code_site}/${site.seo_image}` : null);
+---
+
+<meta name="description" content={seoDesc} />
+<meta property="og:description" content={seoDesc} />
+<meta name="keywords" content={seoKey} />
+
+{seoImage && (
+  <>
+    <meta property="og:image" content={seoImage} />
+    <meta property="og:image:secure_url" content={seoImage} />
+    <meta name="twitter:image" content={seoImage} />
+    <meta property="og:image:type" content="image/jpg" />
+  </>
+)}

@@ -1,0 +1,249 @@
+---
+const { code_carrusel, style } = Astro.props;
+
+const titlesByCode = {
+  featured: {
+    titles: [
+      "PRODUCTOS DESTACADOS",
+      "NUESTRAS MEJORES SELECCIONES",
+      "LO MÁS POPULAR",
+      "SELECCIÓN ESPECIAL",
+      "PRODUCTOS QUE TE ENCANTARÁN",
+      "LO MEJOR DE NOSOTROS",
+      "DESTACADOS",
+      "LO QUE NO TE PUEDES PERDER"
+    ],
+    subtitles: [
+      "¡Descubre lo mejor de nosotros!",
+      "Productos seleccionados especialmente para ti.",
+      "¡Lo que necesitas está aquí!",
+      "Calidad y tendencia en un solo lugar.",
+      "¡No te pierdas lo mejor!",
+      "Productos que destacan por su calidad.",
+      "Seleccionados para destacar.",
+      "Explora nuestras mejores selecciones.",
+      "¡Déjate sorprender!",
+      "Productos que marcan la diferencia."
+    ],
+    texts: [
+      "Explora nuestra selección de productos destacados y conoce lo que marca la diferencia.",
+      "Encuentra los productos que todos están eligiendo.",
+      "¡Navega entre nuestras opciones más destacadas y sorpréndete!",
+      "Descubre artículos especialmente seleccionados para ti.",
+      "Encuentra calidad y tendencia en nuestros productos destacados.",
+      "Te traemos lo mejor para cada ocasión.",
+      "Productos destacados que transformarán tu experiencia.",
+      "¡No dejes pasar estos productos excepcionales!",
+      "Lo mejor de nuestra tienda, disponible para ti.",
+      "Una selección de productos."
+    ]
+  },
+  month: {
+    titles: [
+      "DESTACADOS <br> DEL MES",
+      "LO MEJOR DE ESTE MES",
+      "SELECCIONES MENSUALES",
+      "PRODUCTOS ESTRELLA DEL MES",
+      "NUEVOS FAVORITOS",
+      "SELECCIÓN DEL MES",
+      "PRODUCTOS QUE MARCAN TENDENCIA",
+      "LOS MÁS POPULARES",
+      "PRODUCTOS QUE DESTACAN ESTE MES",
+      "LO QUE TODOS QUIEREN ESTE MES"
+    ],
+    subtitles: [
+      "¡Lo mejor del mes te espera!",
+      "Este mes trae grandes sorpresas.",
+      "¡Descubre nuestras mejores selecciones mensuales!",
+      "Productos destacados solo este mes.",
+      "Lo más popular del momento.",
+      "¡Encuentra lo más buscado!",
+      "Calidad y popularidad en un solo lugar.",
+      "¡No te pierdas las mejores tendencias!",
+      "Seleccionados especialmente para este mes.",
+      "Descubre lo que está marcando tendencia."
+    ],
+    texts: [
+      "Descubre nuestros destacados de este mes y encuentra los productos más populares. ¡No te pierdas las tendencias más emocionantes!",
+      "Explora los productos que más se llevan este mes.",
+      "Productos únicos que están de moda este mes.",
+      "Las tendencias más destacadas de este mes en un solo lugar.",
+      "Encuentra lo que está de moda este mes y renueva tu estilo.",
+      "Artículos que no querrás perderte este mes.",
+      "Los favoritos de nuestros clientes en este mes.",
+      "¡Lo mejor de nuestra tienda este mes, solo para ti!",
+      "Explora nuestras recomendaciones de este mes.",
+      "Lo más buscado y querido en este momento."
+    ]
+  },
+  related: {
+    titles: [
+      "PRODUCTOS RELACIONADOS",
+      "OTRAS OPCIONES QUE TE PUEDEN GUSTAR",
+      "PRODUCTOS SIMILARES",
+      "RECOMENDACIONES PARA TI",
+      "DESCUBRE MÁS PRODUCTOS",
+      "EXPLORA OTRAS OPCIONES",
+      "TAMBIÉN TE PUEDE INTERESAR",
+      "PRODUCTOS QUE VAN CONTIGO",
+      "ALTERNATIVAS RECOMENDADAS",
+    ],
+    subtitles: [
+      "¡Explora más opciones!",
+      "¡Encuentra otros productos increíbles!",
+      "Quizá esto también te interese.",
+      "Más productos pensados para ti.",
+      "Amplía tus opciones con estos productos.",
+      "¡No te pierdas estas alternativas!",
+      "Más opciones que podrían encantarte.",
+      "Explora nuestras recomendaciones.",
+      "¡Algo más que te puede gustar!",
+      "Amplía tus elecciones con estos productos."
+    ],
+    texts: [
+      "Descubre productos relacionados que podrían encantarte. Amplía tus elecciones y encuentra algo más de tu interés.",
+      "Estos productos son perfectos para complementar tu elección.",
+      "Explora opciones similares y encuentra justo lo que buscas.",
+      "Productos recomendados especialmente para ti.",
+      "¡Encuentra algo nuevo que te podría gustar!",
+      "Más opciones que complementan tu búsqueda.",
+      "Explora una selección pensada en tus intereses.",
+      "Descubre productos relacionados que pueden interesarte.",
+      "Recomendaciones de productos que podrías disfrutar.",
+      "Amplía tu selección con estos productos relacionados."
+    ]
+  },
+  view: {
+    titles: [
+      "VISTOS RECIENTEMENTE",
+      "PRODUCTOS QUE HAS VISTO",
+      "TUS ÚLTIMAS SELECCIONES",
+      "ARTÍCULOS RECIENTES",
+      "PRODUCTOS REVISADOS RECIENTEMENTE",
+      "LO QUE HAS EXPLORADO",
+      "PRODUCTOS QUE TE LLAMARON LA ATENCIÓN",
+      "TUS PRODUCTOS RECIENTES",
+      "ÚLTIMOS PRODUCTOS VISTOS",
+      "REVISADOS HACE POCO"
+    ],
+    subtitles: [
+      "¡Revive tus selecciones!",
+      "¿Algo te llamó la atención?",
+      "¡Aquí están tus últimas exploraciones!",
+      "Vuelve a ver lo que te ha interesado.",
+      "¡Revisa de nuevo tus últimas selecciones!",
+      "Productos que captaron tu atención.",
+      "¡Redescubre lo que viste!",
+      "Estos productos te interesaron.",
+      "Vuelve a tus recientes descubrimientos.",
+      "¡Revive lo que captó tu interés!"
+    ],
+    texts: [
+      "Aquí tienes los productos que has explorado recientemente. ¿Algo te llamó la atención? ¡Echa otro vistazo!",
+      "Estos son los artículos que viste recientemente. ¡Dales otra oportunidad!",
+      "Productos que te interesaron en tus últimas visitas.",
+      "¿Te gustaría reconsiderar alguno de estos artículos?",
+      "Vuelve a ver estos productos y decide si son para ti.",
+      "Productos que han captado tu interés recientemente.",
+      "Lo que viste en tu última exploración.",
+      "¿Hay algo aquí que merezca otra mirada?",
+      "Redescubre tus últimas selecciones.",
+      "Estos artículos despertaron tu interés antes. ¡Revísalos de nuevo!"
+    ]
+  }
+};
+
+let ttl_carrusel = "";
+let subttl_carrusel = "";
+let txt_carrusel = "";
+
+if (titlesByCode[code_carrusel]) {
+  const randomIndex = Math.floor(Math.random() * titlesByCode[code_carrusel].titles.length);
+  ttl_carrusel = titlesByCode[code_carrusel].titles[randomIndex];
+  subttl_carrusel = titlesByCode[code_carrusel].subtitles[randomIndex];
+  txt_carrusel = titlesByCode[code_carrusel].texts[randomIndex];
+}
+---
+
+<div id={code_carrusel}>
+  <div class="container">
+    {
+      style === 'carrusel-products-1' && (
+        <div class="row my-5">
+          <div class="col-12 col-md-4 col-lg-3">
+            <h6 class="carrusel-products-1--subttl secondary-font color-mycavi mb-0" innerHTML={subttl_carrusel} />
+            <h3 class="carrusel-products--ttl carrusel-products-1--ttl secondary-font mb-4" data-aos="flip-up" set:html={ttl_carrusel} />
+            <p>{txt_carrusel}</p>
+          </div>
+          <div class="col-12 col-md-8 col-lg-9" data-aos="fade-up">
+            <div id={`slide_${code_carrusel}`} class="splide">
+              <div class="splide__track">
+                <ul id={`${code_carrusel}_products`} class="splide__list"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    {
+      style === 'carrusel-products-2' && (
+        <>
+          <div class="row align-items-end mt-5 mb-4">
+            <div class="col-12 col-lg-5 col-xl-4" style="min-width:min-content">
+              <h2 class="carrusel-products--ttl carrusel-products-2--ttl secondary-font color-mycavi mb-0" data-aos="flip-up" set:html={ttl_carrusel} />
+            </div>
+            <div class="col-12 col-lg-6 mt-3">
+              <h6 class="carrusel-products-2--subttl secondary-font mb-0"><strong>{subttl_carrusel}</strong></h6>
+              <p class="mb-0">{txt_carrusel}</p>
+            </div>
+          </div>
+          <div class="row mb-5">
+            <div class="col-12" data-aos="fade-up">
+              <div id={`slide_${code_carrusel}`} class="splide">
+                <div class="splide__track">
+                  <ul id={`${code_carrusel}_products`} class="splide__list"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    {
+      style === 'carrusel-products-3' && (
+        <>
+          <div class="row mt-5 mb-4">
+            <div class="col-12 offset-lg-2 col-lg-8 text-center">
+              <h6 class="carrusel-products-3--subttl secondary-font color-mycavi mb-0">{subttl_carrusel}</h6>
+              <h2 class="carrusel-products--ttl carrusel-products-3--ttl secondary-font" data-aos="flip-up">{ttl_carrusel.replace(/<[^>]+>/g, '')}</h2>
+              <p class="mb-0">{txt_carrusel}</p>
+            </div>
+          </div>
+          <div class="row mb-5">
+            <div class="col-12" data-aos="fade-up">
+              <div id={`slide_${code_carrusel}`} class="splide">
+                <div class="splide__track">
+                  <ul id={`${code_carrusel}_products`} class="splide__list"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    }
+  </div>
+</div>
+<style>
+.carrusel-products--ttl{font-weight: bold; font-size: 2.2rem;}
+.carrusel-products-2--ttl::after{
+  content: " ";
+  display: block;
+  width: 120px;
+  height: 2px;
+  background: #c6c6c6;
+  position: absolute;
+  bottom: -8px;
+}
+</style>

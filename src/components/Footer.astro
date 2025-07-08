@@ -1,0 +1,100 @@
+---
+import { Renders } from '../server/js/components/theme.js';
+import { requestWithCache } from '../server/js/helpers.js';
+
+import FooterStyle1 from './snippets/footer-style-1.astro';
+import FooterStyle2 from './snippets/footer-style-2.astro';
+import FooterStyle3 from './snippets/footer-style-3.astro';
+
+const { site,config } = Astro.props;
+const dynamicKey = Astro.cookies.get('dinamic_key')?.value;
+
+const render = new Renders(site);
+//Menu
+let footer_menu = '';
+try {
+    const response = await requestWithCache(config.api_url + '/site/menu', 'cachedMenuFooter', dynamicKey, { 'location': 'footer' });
+    if (response.result && response.menu) footer_menu = render.menu(response.menu, "item_footer", "link_footer");
+} catch (error) {
+    console.error(error);
+}
+//Social Network
+let footer_network = '';
+try {
+    const response = await requestWithCache(config.api_url + '/site/networks', 'cachedNetwork', dynamicKey, { 'location': 'footer' });
+    if (response.result) footer_network = render.footerNetwork(response.data);
+} catch (error) {
+    console.error(error);
+}
+
+//Style component
+const footerKey = site.settings.snippet.footer; 
+const footer = {
+  'footer-style-1': FooterStyle1,
+  'footer-style-2': FooterStyle2,
+  'footer-style-3': FooterStyle3
+};
+const FooterComponent = footer[footerKey] ?? FooterStyle1;
+---
+
+<footer class={`footer ${site.settings.snippet.footer}`}>
+	<FooterComponent site={site} config={config} menu={footer_menu} network={footer_network}/>
+  <Fragment set:html={footer_network.whatsApp}></Fragment>
+</footer>
+
+<style is:global>
+.footer__bottom{ background-color: #0e0e0e; font-size: 13px;}
+.footer-style-3--network .footer__network_li, .footer-network-2--li{ display: inline-block; margin: 8px 15px; }
+
+.footer__menu,.footer__network{ list-style: none; margin:0; padding: 0;}
+.footer-network-1 i{margin-right:10px;}
+.footer-network-2 {
+  background-color: rgb(0 0 0 / 46%);
+  width: 45px;
+  height: 45px;
+  display: table-cell;
+  vertical-align: middle;
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 0;
+  color: #FFFFFF;
+  text-align: center;
+}
+.footer-network-2.facebook{background-color: #4267b2;}
+.footer-network-2.twitter{background-color: #1D9BF0;}
+.footer-network-2.youtube{background-color: #FF0000;}
+.footer-network-2.instagram{background-color: #7B21B2;}
+.footer-network-2.pinterest{background-color: #B7081B;}
+.footer-network-2.tiktok{background-color: #000000;}
+.footer-network-2:hover{background-color: rgb(255 255 255 / 92%)}
+
+li.item_footer { margin: 5px 0; }
+.social_network { line-height: 2; }
+.social_network:hover.facebook{color: #4267b2;}
+.social_network:hover.twitter{color: #1D9BF0;}
+.social_network:hover.youtube{color: #FF0000;}
+.social_network:hover.instagram{color: #7B21B2;}
+.social_network:hover.pinterest{color: #B7081B;}
+.social_network:hover.tiktok{color: #000000;}
+
+.footer_btn-whats{
+  position:fixed;
+  width:55px;
+  height:55px;
+  color:#FFF !important;
+  line-height: 55px;
+  right:19px;
+  border-radius:50px;
+  text-align:center;
+  font-size:30px;
+  box-shadow: 0px 1px 10px rgba(0,0,0,0.3);
+  z-index:999;
+  transition: all 300ms ease;
+  bottom:90px;
+  background: #26C943;
+}
+.footer_btn-whats:hover{background: #fff;color:#26C943 !important}
+@media screen and (max-width: 992px){
+  footer{text-align: center;}
+}
+</style>

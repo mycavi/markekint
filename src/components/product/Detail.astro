@@ -1,0 +1,178 @@
+---
+const { site, active_user, data, stock_data, viewed_products,parent } = Astro.props;
+import { config } from "../../server/js/config.js";
+import CarruselStyles from '../../components/snippets/carruselStyles.astro';
+import ProductInfo from '../../components/product/ProductInfo.astro';
+
+const showStock = (site.settings.config.show_stock == 1 && stock_data) || (active_user && site.settings.config.show_stock == 0 && stock_data);
+const showPrice = site.settings.config.show_price == 1 || (active_user && site.settings.config.show_price == 0);
+
+const dynamicStyles = `
+.input__file_box{border: 2px dashed ${site.settings.design.main_color};}
+.input__file_icon{color: ${site.settings.design.main_color};}
+.input__file{color: ${site.settings.design.main_color};}`;
+
+const dynamicScript = `<script>
+    const code_product="${data.code_product}";
+	const parent="${parent}";
+</script>`;
+const dynamicLib = `<script id="virtualCavi" src="https://mycavi.com/virtualCavi-bundle/virtualCavi.min.js?key=${config.virtualcavi_key}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>`;
+---
+<div class="container-fluid">
+  <div class="product__breadcrumb row align-items-center">
+    <div class="col-7 col-md-6">
+      <a href="/" class="category-link">INICIO</a>
+      {data.categories?.map((cat) => ( <a href={`/categoria/${cat.code_category}`} class="category-link"> {cat.name_category.toUpperCase()} </a> ))}
+    </div>
+    {active_user && (
+      <div class="col-5 col-md-6 text-end">
+        <a href={`/ficha-tecnica/${data.code_product}`} target="_blank" class="btn btn-sm btn-mycavi btn-mycavi-breadcrumb"> Ficha técnica </a>
+      </div>
+    )}
+  </div>
+</div>
+<div class="product_container container">
+  <div class="row mt-5">
+    <div class="col-md-6">
+      {data.images ? (
+        <div id="gallery" class="product__img product__gallery carousel slide" data-bs-ride="false">
+          <div class="product__gallery_list carousel-indicators">
+            <button type="button" image-type="main" data-bs-target="#gallery" class="product__gallery_bg active" style={`background-image:url(${data.imagen})`} data-bs-slide-to="0" aria-current="true"></button>
+            {data.images.aditionals?.map((img, index) => (
+              <button type="button" image-type="aditional" data-bs-target="#gallery" class="product__gallery_bg" style={`background-image:url(${img.imagen})`} data-bs-slide-to={`${index + 1}`}></button>
+            ))}
+            {data.images.model?.map((img, index) => (
+              <button type="button" image-type="vector" data-bs-target="#gallery" class="product__gallery_bg" style={`background-image:url(${img.imagen})`} data-bs-slide-to={`${(data.images.aditionals?.length || 0) + index + 1}`}></button>
+            ))}
+          </div>
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <a class="product__img" href={data.imagen} data-fancybox={data.code_product}>
+                <img src={data.imagen} image-type="main" class="d-block w-100" alt={data.name_product} virtualcavi="mainImg" />
+              </a>
+            </div>
+            {data.images.aditionals?.map((img, index) => (
+              <div class="carousel-item">
+                <a class="product__img" href={img.imagen} data-fancybox={data.code_product}>
+                  <img src={img.imagen} image-type="aditional" class="d-block w-100" alt={`${data.name_product}-${index + 1}`} />
+                </a>
+              </div>
+            ))}
+            {data.images.model?.map((img, index) => (
+              <div class="carousel-item">
+                <a class="product__img" href={img.imagen} data-fancybox={data.code_product}>
+                  <img src={img.imagen} image-type="vector" class="d-block w-100" alt={`${data.name_product}-${img.type}-${index + 1}`} />
+                </a>
+              </div>
+            ))}
+          </div>
+          <span class="product__icon_zoom"><i class="bi bi-zoom-in"></i></span>
+        </div>
+      ) : (
+        <div id="gallery">
+          <div class="active">
+            <a class="product__img" href={data.imagen} data-fancybox={data.code_product}>
+              <span class="product__icon_zoom"><i class="bi bi-zoom-in"></i></span>
+              <img src={data.imagen} class="w-100" onError="this.src='https://mycavi.com/public/no-disponible.jpg'" alt={data.name_product} virtualcavi="mainImg" />
+            </a>
+          </div>
+        </div>
+      )}
+      <div virtualcavi="codeProduct" style="display:none">{data.code_product}</div>
+      <div virtualcavi="mainBtn" class="mt-2 py-2"></div>
+    </div>
+
+    <div class="col-md-6 product__details">
+      <h1 class="product__name secondary-font color-mycavi">{data.name_product}</h1>
+      <p class="product__code_detail text-uppercase">{data.code_product}</p>
+      <p>{data.description}</p>
+      {data.name_color && (
+        <p class="mb-0">
+          <strong class="d-block mb-1">Color:</strong>
+          <label id={`color_${data.code_color}`} data-bs-toggle="tooltip" class={`color_box color_box--detail ${data.code_color}`} data-bs-title={data.name_color}></label>
+        </p>
+      )}
+      {showPrice && (
+        <>
+          <p class="mb-0">
+            <span class="product__prices secondary-font">${parseFloat(data.sale_price).toFixed(2)}</span>
+          </p>
+          <p class="font-small text-secondary">
+            *Los precios son de carácter informativo por lo que están sujetos a cambios sin previo aviso y <strong>son más IVA.</strong>
+          </p>
+        </>
+      )}
+      {stock_data && stock_data !== 'No disponible' && (
+        <>
+          <p class="mb-0">
+            <strong>Existencias: </strong>
+            <span>{stock_data.stock}</span>
+          </p>
+          {stock_data.stock === 0 && active_user && (
+            <button class="btn btn-outline-dark mt-2" onClick={`stockNotification(event, '${data.code_product.trim()}')`}>
+              <i class="bi bi-bell"></i> Avisarme cuando esté disponible
+            </button>
+          )}
+        </>
+      )}
+      {showStock ? (
+        stock_data.stock > 0 && (
+          <>
+            <div id="alertBtnCartBox"></div>
+            <div class="product__cart_box mt-4">
+              <input id="qty" type="number" class="form-control w-50 text-center" placeholder="Cantidad" name="qty" value="1" min="1" code_product={data.code_product.trim()} max={stock_data ? String(stock_data.stock).replace(',', '') : '9999999'} />
+              <button type="button" class="btn btn-sm btn-mycavi w-50 ms-2" onClick="AddCart('detail', this);">Agregar</button>
+            </div>
+          </>
+        )
+      ) : (
+        !active_user && (
+          <div class="alert alert-secondary mt-3" role="alert">
+            Para poder cotizar. Favor de <a data-bs-toggle="modal" data-bs-target="#modaLogin" class="alert-link" style="cursor: pointer;">Iniciar Sesión.</a>
+          </div>
+        )
+      )}
+      <div id="parent" style="display:none">
+        <div class="row">
+          <div class="col-12">
+            <h5 class="secondary-font mt-3" data-aos="flip-up">También disponible en:</h5>
+          </div>
+        </div>
+        <div id="parent_products" class="row"></div>
+      </div>
+      {data.note && (
+        <div class="alert alert-secondary mt-3 pt-2 pb-0 mb-0" role="alert" style="font-size: 14px;"> <strong>NOTA:</strong> <span innerHTML={data.note}></span> </div>
+      )}
+    </div>
+  </div>
+</div>
+{(Array.isArray(data.printing) && data.printing.length > 0) || data.size_printing != null || data.material != null || data.width_p != null || data.height_p != null ||
+ data.qty_package != null || data.height_package != null || data.width_package != null || data.package_weight != null ? (
+  <ProductInfo data={data} />
+) : null}
+
+<CarruselStyles code_carrusel="related" style={site.settings.snippet.carrusel_products} />
+{viewed_products?.length > 1 && (
+  <CarruselStyles code_carrusel="view" style={site.settings.snippet.carrusel_products} />
+)}
+
+<style set:html={dynamicStyles}></style>
+
+<Fragment slot="scripts" set:html={dynamicScript}> </Fragment>
+<Fragment slot="scripts">
+    <script type="application/json" id="data-product" set:html={JSON.stringify({ viewed_products })}></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        VCsnippetConfig.saveToInput = "Cotizar";
+        VCsnippetConfig.mainBtn = "¡Prueba o cotiza con tu logo o texto!";
+    });
+    </script>
+
+    <script type="module" src={`/js/product-detail.js`}></script>
+</Fragment>
+
+<Fragment slot="libraries" set:html={dynamicLib}> </Fragment>
+<Fragment slot="styles">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+</Fragment>

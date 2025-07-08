@@ -1,0 +1,90 @@
+---
+import { clearCache } from "../server/js/helpers.js";
+/* 
+const url = new URL(Astro.request.url);
+const admin_access = url.searchParams.get('admin_access');
+*/
+
+clearCache();
+---
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Limpiando cache</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;800&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?family=FontAwesome&display=swap" rel="stylesheet preload">
+    <style>
+        body{ font-size: 16px; }
+        h1, h2, p{ font-family: "Poppins", sans-serif; }
+        h1{ font-weight: 800; }
+        .error-title{
+            font-size: 2rem;
+            margin: 20px 0;
+            color: #7c7c7c;
+        }
+        .btn-main,.btn-main:hover{
+            color: #FFFFFF;
+            background: #000000;
+        }
+        .btn{
+            display: inline-block;
+            text-decoration: none;
+            padding: 7px 25px;
+            border-radius: 5px;
+            border: 0;
+        }
+        @media screen and (max-width: 992px) {
+            .col__left{ text-align: center; }  
+            .img_page{ max-width: 500px; width: 100%;}
+        }
+        @media screen and (min-width: 992px) {
+            .error-title{ font-size: 3rem; } 
+            .main_container{
+                align-items:center;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main_container row align-items-center">
+            <div class="col__left col-12 col-lg-5 offset-lg-1 py-4">
+                <h1 class="error-title">Cache limpiada</h1>
+                <h2 class="error-title">Limpiando también tu cache del navegador...</h2>
+            </div>
+            <div class="col__right col-12 col-lg-6 text-center">
+                <img src="https://mycavi.com/public/broken.gif?v=1" alt="404 Error" class="img_page img-fluid">
+            </div>
+        </div>
+    </div>
+</body>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Borrar cookies
+        document.cookie.split(";").forEach(cookie => {
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.slice(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+        });
+
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+            for (let name of names) caches.delete(name);
+            });
+        }
+
+        console.log("Todas las cookies y cachés han sido eliminadas");
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 1500);
+    });
+  </script>
+</html>

@@ -1,0 +1,15 @@
+---
+import Compact from './snippets/cart-compact.astro';
+import Full from './snippets/cart-full-width.astro';
+
+const { site, active_user } = Astro.props;
+
+//Style component
+const key = site.settings.snippet.cart_style; 
+const style = {
+  'default': Compact,
+  'cart-style-4': Full
+};
+const Component = style[key] ?? Compact;
+---
+<Component site={site} active_user={active_user}/>

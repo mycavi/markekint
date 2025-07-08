@@ -1,0 +1,72 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SeoMeta from "../components/SeoMeta.astro";
+
+const thankYouTitles = [
+  "¡Gracias por enviar tu cotización!",
+  "¡Tu cotización ha sido enviada!",
+  "Solicitud recibida con éxito",
+  "¡Cotización enviada!",
+  "¡Gracias por tu interés!",
+  "Tu solicitud ha sido enviada correctamente",
+  "¡Gracias por cotizar con nosotros!",
+  "¡Cotización en camino!",
+  "¡Solicitud de cotización enviada!",
+  "¡Nos pondremos en contacto pronto!"
+];
+
+const thankYouMessages = [
+  "Tu cotización fue enviada correctamente",
+  "Tu cotización fue enviada exitosamente",
+  "Hemos recibido tu solicitud de cotización",
+  "Tu cotización ya está en nuestro sistema",
+  "Hemos registrado tu cotización",
+  "¡Gracias! Tu solicitud está siendo procesada",
+  "¡Tu cotización ha sido enviada exitosamente!",
+  "Tu cotización está en buenas manos",
+  "¡Recibimos tu cotización!",
+  "¡Todo listo! Tu cotización fue enviada correctamente"
+];
+
+const followUpMessages = [
+  "Pronto uno de nuestros asesores se pondrá en contacto para dar seguimiento a tu solicitud",
+  "Un asesor se comunicará contigo para dar seguimiento a tu solicitud",
+  "Nos pondremos en contacto contigo",
+  "Uno de nuestros asesores estará en contacto contigo",
+  "Pronto te contactaremos para continuar con el proceso",
+  "Un representante te contactará para brindarte más detalles",
+  "Te contactaremos pronto para resolver cualquier duda",
+  "Nuestros asesores se pondrán en contacto en breve",
+  "Estamos procesando tu solicitud y te contactaremos pronto",
+  "Pronto uno de nuestros expertos se pondrá en contacto contigo"
+];
+
+const thankYouTitle = thankYouTitles[Math.floor(Math.random() * thankYouTitles.length)];
+const thankYouMessage = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
+const followUpMessage = followUpMessages[Math.floor(Math.random() * followUpMessages.length)];
+---
+
+<Layout title={thankYouTitle}>
+  <SeoMeta slot="seo" />
+
+  <div class="container">
+    <div class="page_container_section row align-items-center text-center">
+      <div class="col-12 my-4">
+        <h1 class="secondary-font color-mycavi">{thankYouTitle}</h1>
+        <h3>{thankYouMessage}</h3>
+        <h6>{followUpMessage}</h6>
+        <a href="/" class="btn btn-mycavi my-4">Seguir navegando en el sitio</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const header = document.getElementById('app_header');
+    const footer = document.getElementById('footer');
+    const minHeight = header?.clientHeight + footer?.clientHeight;
+    const section = document.querySelector('.page_container_section');
+    if (section && minHeight) {
+      section.style.minHeight = `calc(100vh - ${minHeight}px)`;
+    }
+  </script>
+</Layout>

@@ -1,0 +1,212 @@
+---
+const { site, active_user, data, stock_data, viewed_products,parent } = Astro.props;
+import { config } from "../../server/js/config.js";
+import CarruselStyles from '../../components/snippets/carruselStyles.astro';
+import ProductInfo from '../../components/product/ProductInfo.astro';
+
+const showStock = (site.settings.config.show_stock == 1 && stock_data) || (active_user && site.settings.config.show_stock == 0 && stock_data);
+const showPrice = site.settings.config.show_price == 1 || (active_user && site.settings.config.show_price == 0);
+
+function imageCarrusel(data, img, index, type) {
+    return `<div class="carousel-item">
+        <a class="product__img" href=${img.imagen} data-fancybox="${data.code_product}"">
+            <img src=${img.imagen} image-type="${type}" class="d-block w-100" alt="${data.name_product}-${index + 1}"/>
+        </a>
+    </div>`;
+}
+let images_carruse = '';
+data.images?.aditionals?.map((img, i) => (
+    images_carruse+= imageCarrusel(data, img, i, 'aditional')
+))
+data.images?.model?.map((img, i) => (
+    images_carruse+= imageCarrusel(data, img, i, 'vector')
+))
+data.images?.color?.map((img, i) => (
+    images_carruse+= imageCarrusel(data, img, i, 'color')
+))
+
+const dynamicStyles = `
+.product__breadcrumb{background-color:${site.settings.design.main_color};}
+.input__file_box{border: 2px dashed ${site.settings.design.main_color};}
+.input__file_icon{color: ${site.settings.design.main_color};}
+.input__file{color: ${site.settings.design.main_color};}`;
+
+const dynamicScript = `<script>
+    const code_product="${data.code_product}";
+	const parent="${parent}";
+</script>`;
+const dynamicLib = `<script id="virtualCavi" src="https://mycavi.com/virtualCavi-bundle/virtualCavi.min.js?key=${config.virtualcavi_key}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>`;
+---
+<div class="container-fluid">
+  <div class="product__breadcrumb row align-items-center">
+    <div class="col-7 col-md-6">
+      <a href="/" class="category-link">INICIO</a>
+      {data.categories?.map((cat) => ( <a href={`/categoria/${cat.code_category}`} class="category-link"> {cat.name_category.toUpperCase()} </a> ))}
+    </div>
+    {active_user && (
+      <div class="col-5 col-md-6 text-end">
+        <a href={`/ficha-tecnica/${data.code_product}`} target="_blank" class="btn btn-sm btn-mycavi btn-mycavi-breadcrumb"> Ficha técnica </a>
+      </div>
+    )}
+  </div>
+</div>
+
+<!-- Aquí comienza el contenedor de producto -->
+<div class="product_container container" data-source="detail">
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <!-- Galería de imágenes -->
+            <div id="gallery" class="product__img product__gallery carousel slide" data-bs-ride="false">
+                <div class="product__gallery_list carousel-indicators">
+                    <button type="button" image-type="main" data-bs-target="#gallery" class="product__gallery_bg active" style={`background-image:url(${data.imagen})`} data-bs-slide-to="0" aria-current="true" />
+                    {data.images?.aditionals?.map((img, i) => (
+                        <button type="button" image-type="aditional" data-bs-target="#gallery" class="product__gallery_bg" style={`background-image:url(${img.imagen})`} data-bs-slide-to={`${i + 1}`} />
+                    ))}
+                    {data.images?.model?.map((img, i) => (
+                        <button type="button" image-type="vector" data-bs-target="#gallery" class="product__gallery_bg" style={`background-image:url(${img.imagen})`} data-bs-slide-to={`${i + 1 + (data.images?.aditionals?.length || 0)}`} />
+                    ))}
+                    {data.images?.color?.map((img, i) => (
+                        <button type="button" image-type="color" data-bs-target="#gallery" class="product__gallery_bg" style={`background-image:url(${img.imagen})`} data-bs-slide-to={`${i + 1 + (data.images?.aditionals?.length || 0) + (data.images?.model?.length || 0)}`} />
+                    ))}
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <a class="product__img" href={data.imagen} data-fancybox={data.code_product}>
+                        <img src={data.imagen} image-type="main" class="d-block w-100" alt={data.name_product} virtualcavi="mainImg"/>
+                        </a>
+                    </div>
+                    <Fragment set:html={images_carruse}> </Fragment>
+                </div>
+                <span class="product__icon_zoom"><i class="bi bi-zoom-in"></i></span>
+            </div>
+            <div virtualcavi="codeProduct" style="display:none">{data.code_product}</div>
+			<div virtualcavi="mainBtn" class="mt-2 py-2"></div>
+        </div>
+
+        <div class="col-md-6 product__details">
+            <h1 class="product__name secondary-font color-mycavi">{data.name_product}</h1>
+            <p class="product__code_detail text-uppercase">{data.code_product}</p>
+            <p>{data.description}</p>
+
+            {data.colores?.length > 0 && (
+                <div class="row">
+                    <strong class="d-block mb-1">{showStock ? 'Existencias por color:' : 'Colores:'}</strong>
+                    {Array.isArray(data.colores) && data.colores.map((color) => {
+                        const stockItem = stock_data?.find((s) => s.code === color.code);
+                        const stockQty = stockItem?.stock ?? 0;
+                        return showStock ? (
+                            <div class="col-4 d-inline-flex align-items-center mb-3 pointer" style="min-width:130px" data-code={color.color_provider} data-bs-toggle="tooltip" data-bs-title={color.color_provider} >
+                                <label class={`color_box color_box--detail ${color.code_color} mb-0 pointer`} />
+                                <span class="ms-2">{stockQty}</span>
+                            </div>
+                        ) : (
+                            <label class={`color_box color_box--detail ${color.code_color} mb-0 pointer me-2`} data-code={color.color_provider}  data-bs-toggle="tooltip" data-bs-title={color.color_provider} />
+                        );
+                    })}
+                </div>
+            )}
+
+            {showPrice && (
+                <>
+                <p class="mb-0"><span class="product__prices secondary-font">${data.sale_price.toFixed(2)}</span></p>
+                <p class="font-small text-secondary">*Los precios son informativos y no incluyen IVA ni técnica de impresión.</p>
+                </>
+            )}
+
+            <div class="mt-3 w-75">
+                <div class="">
+                    <div class="mb-3 row">
+                        <label class="col-3 col-form-label">Cantidad</label>
+                        <div class="col-9">
+                            <input type="number" class="qty form-control w-40 text-center" placeholder="Cantidad" name="qty" value="1" min="1" />
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="addCartColorDetail" class="col-3 col-form-label">Color</label>
+                        <div class="col-9">
+                            <select class="add-cart-color form-select me-3" id="addCartColorDetail">
+                                {((site.settings.config.show_stock === 1 && stock_data && stock_data !== 'No disponible') || (active_user && site.settings.config.show_stock === 0 && stock_data && stock_data !== 'No disponible')) ? stock_data.map((stock) => (
+                                    <option key={stock.code} code_product={stock.code} value={stock.stock}> {stock.color} </option>
+                                )) : Array.isArray(data.colores) && data.colores.map((color) => ( 
+                                    <option key={color.code} code_product={color.code} value="99999"> {color.color_provider} </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+    
+                    <div class="mb-1 row">
+                        <label class="col-3 col-form-label">Decorado</label>
+                        <div class="col-9">
+                            <select class="add-print-tech form-select" name="">
+                                <option value="">Ninguno</option>
+                                {Array.isArray(data.printing) && data.printing.map((printing) => ( <option key={printing.code_printing} value={printing.code_printing}> {printing.name_printing} </option> ))}
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <input virtualcavi="savedInput" type="hidden" class="add-img-virtualcavi"></input>
+            	<div virtualcavi="savedInputMessage" style="text-align: center;margin: 10px auto;"></div>
+				<div class="btn-add-cart-box"></div>
+				<div class="alert-btn-cart-box"></div>
+                {active_user && (
+                    <button class="btn-stock-notification btn btn-outline-dark mt-2 d-none"><i class="bi bi-bell"></i> Avisarme cuando esté disponible</button>
+                )}
+                {data.note && (
+                    <div class="alert alert-secondary mt-3 pt-2 pb-0 mb-0" role="alert" style="font-size: 14px;"><strong>NOTA:</strong><Fragment set:html={data.note}></Fragment></div>
+                )}
+            </div>
+
+            {(site.settings.config.show_stock === 0 || site.settings.config.show_price === 0) && !active_user && (
+              <div class="alert alert-secondary mt-3" role="alert">
+                {site.settings.config.show_stock === 0 && site.settings.config.show_price === 0 ? (
+                  <>Para ver stock y precios disponibles, </>
+                ) : site.settings.config.show_stock === 0 ? (
+                  <>Para ver stock disponible, </>
+                ) : site.settings.config.show_price === 0 ? (
+                  <>Para ver precios disponibles, </>
+                ) : null}
+                favor de <a data-bs-toggle="modal" data-bs-target="#modaLogin" class="alert-link text-decoration-underline" style="cursor: pointer;">Iniciar Sesión.</a>
+              </div>
+            )}
+        </div>
+    </div>
+</div>
+
+{(Array.isArray(data.printing) && data.printing.length > 0) || data.size_printing != null || data.material != null || data.width_p != null || data.height_p != null ||
+ data.qty_package != null || data.height_package != null || data.width_package != null || data.package_weight != null ? (
+  <ProductInfo data={data} />
+) : null}
+
+<CarruselStyles code_carrusel="related" style={site.settings.snippet.carrusel_products} />
+{viewed_products?.length > 1 && (
+  <CarruselStyles code_carrusel="view" style={site.settings.snippet.carrusel_products} />
+)}
+
+<style set:html={dynamicStyles}></style>
+
+<Fragment slot="scripts" set:html={dynamicScript}> </Fragment>
+<Fragment slot="scripts">
+    <script type="application/json" id="data-product" set:html={JSON.stringify({ viewed_products })}></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        VCsnippetConfig.saveToInput = "Cotizar";
+        VCsnippetConfig.mainBtn = "¡Prueba o cotiza con tu logo o texto!";
+
+        document.querySelectorAll('.color_box--detail').forEach(el => {
+            el.addEventListener('click', () => {
+                const id = el.dataset.code;
+                selectCircleColor(id);
+            });
+        });
+    });
+    </script>
+
+    <script type="module" src={`/js/product-detail.js`}></script>
+</Fragment>
+
+<Fragment slot="libraries" set:html={dynamicLib}> </Fragment>
+<Fragment slot="styles">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+</Fragment>

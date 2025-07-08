@@ -1,0 +1,147 @@
+---
+import { config } from "../server/js/config.js";
+import Layout from "../layouts/Layout.astro";
+import SeoMeta from "../components/SeoMeta.astro";
+import ModalsAddress from '../components/snippets/modal-address.astro';
+import "../server/css/profile.css";
+
+const { site , active_user, user} = Astro.locals;
+const dynamicStyles = `.nav-pills .active{background-color: ${site.settings.design.main_color} !important;}`
+---
+
+<Layout title="Mi perfil">
+    <SeoMeta slot="seo"/>
+
+    <div class="user__data">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-7">
+                    <h1 class="user__ttl secondary-font color-mycavi" data-aos="flip-up">Mi perfil</h1>	
+                </div>
+                <div class="col-5 text-end">
+                    <a class="btn btm-sm btn-dark" href='#' data-bs-toggle='modal' data-bs-target='#modaEditUser'> Editar <a>
+                </div> 
+                <div class="col-12"> <hr> </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-3 col-md-2 d-flex justify-content-center">
+                    <div class="user__img">
+                        <img src="/avatar-flat.gif" class="img-fluid" width="450" height="450" alt="{user.name}">
+                    </div>
+                </div>
+                <div class="col-9 col-md-10">
+                    <h6 class="user__name">{user.name}</h6>
+                    <p class="user__code color-mycavi">{user.code_user}</p>
+                    <p class="user__email mb-0"><i class="bi bi-envelope color-mycavi me-2"></i> {user.user_email}</p>
+                    <p class="user__phone mb-0"><i class="bi bi-telephone color-mycavi me-2"></i> {user.tel}</p>
+                    <p class="user__company mb-0"><i class="bi bi-building color-mycavi me-2"></i> {user.company}</p>
+                </div>
+            </div>
+        </div>  
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-4 d-none d-md-inline">
+                <div class="card menu-profile">
+                    <div class="card-body">
+                        <div class="nav flex-column nav-pills nav-desktop" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <a class="nav-link active tabs-profile get-directions" id="v-pills-direcciones-tab" data-bs-toggle="pill" href="#v-pills-direcciones" role="tab" aria-controls="v-pills-direcciones" aria-selected="false" data-user={user.ui_user}>Direcciones <i class="bi bi-angle-right float-end mt-1" aria-hidden="true"></i></a>
+                            <a class="nav-link tabs-profile get-sessions" id="v-pills-sesiones-tab" data-bs-toggle="pill" href="#v-pills-sesiones" role="tab" aria-controls="v-pills-sesiones" aria-selected="false" data-id={user.id_user}>Sesiones <i class="bi bi-angle-right float-end mt-1" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="card mb-3 menu-profile-results">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs nav-mobile mb-5" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active get-directions" id="direcciones-tab" data-bs-toggle="pill" href="#v-pills-direcciones" role="tab" aria-selected="false" data-user={user.ui_user}><i class="bi bi-person-lines-fill" aria-hidden="true"></i> Direcciones</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link get-sessions" id="sesiones-tab" data-bs-toggle="pill" href="#v-pills-sesiones" role="tab" aria-selected="false" data-id={user.id_user}><i class="bi bi-laptop" aria-hidden="true"></i> Sesiones</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="v-pills-tabContent">                        
+                            <div class="tab-pane fade show active" id="v-pills-direcciones" role="tabpanel" aria-labelledby="v-pills-direcciones-tab">                           
+                                <h4 class="secondary-font mb-4 title-profile-results">Direcciones</h4>
+                                <div class="row" id="view-addresses"></div>
+                            </div>
+                            <div class="tab-pane fade" id="v-pills-sesiones" role="tabpanel" aria-labelledby="v-pills-sesiones-tab">
+                                <h4 class="secondary-font mb-4 title-profile-results">Sesiones</h4>	
+                                <div class="row" id="view-sessions"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</Layout>
+<style set:html={dynamicStyles}></style>
+
+<Fragment slot="scripts">
+    <script type="module" src={`/js/page-profile.js`}></script>
+
+    <script>
+    document.querySelectorAll('.get-directions').forEach(el => {
+        el.addEventListener('click', () => {
+            getAddress(el.dataset.user);
+        });
+    });
+    document.querySelector('.get-sessions').addEventListener('click', function (e) {
+        getSessions(this.dataset.id);
+    });
+    </script>
+</Fragment>
+
+<Fragment slot="libraries">
+    <script type="text/javascript" src="/js/js-form-validator.js"></script>
+</Fragment>
+
+<Fragment slot="modals">
+    <ModalsAddress logotype={site.logo_site} app_name={config.app_name} active_user={active_user} />
+
+    <div class="modal fade" id="modaEditUser">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header row align-items-center" style="border:0">
+                    <div class="col-5">
+                        <img src={site.logo_site} class="img-fluid" width="140px" alt={config.app_name}>
+                    </div>
+                    <div class="col-6 text-end">
+                        <h5 class="ttl_font mb-0">EDITAR DATOS</h5>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                    <form id="form-edit-user" method="POST" class="customer-form">
+                        <div class="form-group mb-3">
+                            <label for="form-user-name">Nombre:</label>
+                            <input type="text" class="form-control" id="form-user-name" name="name" disabled value={user.name} data-rule="required">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="form-user-phone">Teléfono:</label>
+                            <input type="tel" class="form-control" id="form-user-phone" name="phone" disabled value={user.tel} data-rule="phone|required">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="form-user-company">Empresa:</label>
+                            <input type="text" class="form-control" id="form-user-company" name="company" disabled value={user.company} data-rule="required">
+                        </div>
+                        <div class="col-12 text-end">
+                            <div class="alert-form"></div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CERRAR</button>
+                            <button type="submit" class="btn btn-mycavi">EDITAR</button>
+                        </div>
+                    </form>
+            </div>
+            </div>
+        </div>
+    </div>
+</Fragment>

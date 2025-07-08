@@ -1,0 +1,29 @@
+---
+const { post, unavailable } = Astro.props;
+const imageSrc = post.image || unavailable;
+---
+{post.snippet_code ==="post-downloadable-style-1" && (
+    <div class={`post_downloadable_box post_downloadable-style-1 col-12 col-md-6 col-lg-${post?.width_column ?? 4} my-4`} data-aos="fade-up">
+        <div class="post_downloadable-style-1--img">
+            <img loading="lazy" src={imageSrc} onError={`this.src='${unavailable}'`} class="w-100" alt={post?.title} />
+        </div>
+
+        <div class="post_downloadable-style-1--data mt-3 text-center">
+            {post?.title && (<h4 class="post_downloadable-style-1--ttl"><strong class="secondary-font">{post.title}</strong></h4>)}
+            {post?.pdf && (<a href={post.pdf} target="_blank" class="btn btn-mycavi"> Descargar </a>)}
+        </div>
+    </div>
+)}
+
+{!post.snippet_code && (
+    <div class={`post_downloadable_box post_downloadable-style-1 col-12 col-md-6 col-lg-${post?.width_column ?? 4} my-4`} data-aos="fade-up">
+        <div class="post_downloadable-style-1--img">
+            <img loading="lazy" src={imageSrc} onError={`this.src='${unavailable}'`} class="w-100" alt={post?.title} />
+        </div>
+
+        <div class="post_downloadable-style-1--data mt-3 text-center">
+            {post?.title && (<h4 class="post_downloadable-style-1--ttl"><strong class="secondary-font">{post.title}</strong></h4>)}
+            {post?.pdf && (<a href={post.pdf} target="_blank" class="btn btn-mycavi"> Descargar </a>)}
+        </div>
+    </div>
+)}

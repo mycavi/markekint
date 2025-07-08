@@ -1,0 +1,37 @@
+---
+const { site, config, active_user, user } = Astro.props;
+const dynamicKey = Astro.cookies.get('dinamic_key')?.value;
+
+const scriptContent = `
+    window.theme = window.theme || {};
+    window.theme.user = {
+		active: ${active_user},
+        token: "${user?.session_token}",	
+	};
+    window.theme.header = {
+        style: "${site.settings.snippet.header_style}"
+    };
+    window.theme.site = {
+        url: "${Astro.url.origin}",
+        request: "${config.api_url}",
+        token : "${dynamicKey}",
+        virtualcavi: "${config.virtualcavi_key}",
+        captcha : "${config.captcha_site}",
+    };
+    window.theme.carrusel = {
+        phone: ${site.settings.snippet.carrusel_items_phone},
+        tablet: ${site.settings.snippet.carrusel_items_tablet},
+        desktop: ${site.settings.snippet.carrusel_items_desktop},
+        arrows: ${site.settings.snippet.carrusel_arrows}
+    };
+    window.theme.product = {
+        preview: "${site.settings.snippet.preview_product}",
+        prices: ${site.settings.config.show_price},
+        stock: ${site.settings.config.show_stock},
+        cart: "${site.settings.snippet.cart_style}"
+    };
+    window.theme.showByModel = ${site.settings.config.show_by_model === 1 ? 'true' : 'false'};
+    window.theme.whatsAppOrders = "${site.notifications_whats_app}";
+`;
+---
+<script is:inline type="text/javascript" set:html={scriptContent}></script>

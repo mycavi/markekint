@@ -1,0 +1,69 @@
+---
+// Style: Dividido
+const {site, config, menu, network } = Astro.props;
+const year = new Date().getFullYear();
+const footerStyle = site.settings.snippet.footer;
+const logo = site.extra_logo || site.logo_site;
+const footerText = site.settings.snippet.footer_text || null;
+---
+<div class={`footer__top ${footerStyle}--top`}>
+    <div class="container-fluid">
+        <div class="row">
+            <div class={`${footerStyle}--top-left col-lg-6 col-12`} style="z-index: 1;" >
+                <img src={logo} class="img-fluid mb-4" width="190" alt={config.app_name} loading="lazy"/>
+                {footerText && (
+                    <>
+                        <h5 class="footer_ttl">Contáctanos</h5>
+                        <div set:html={footerText} />
+                    </>
+                )}
+            </div>
+
+            <div class={`footer__bg ${footerStyle}--top-right col-lg-6 col-12`}>
+                <div class="row">
+                    <ul id="footer__network" class={`footer__network ${footerStyle}--network col-lg-5 col-12`} set:html={network.items}></ul>
+                    <div class="col-lg-5 col-12">
+                        <h5 class="footer_ttl secondary-font"> Más información </h5>
+                        <ul class={`footer__menu ${footerStyle}--menu`} set:html={menu}></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class={`footer__bottom ${footerStyle}--bottom container-fluid`}>
+    <div class="row py-2 d-flex align-items-center text-white">
+        <div class="col-md-7 offset-md-1 copy">
+            <span>© {year} Todos los Derechos Reservados MyCavi</span>
+        </div>
+        <div class="col-md-3 offset-md-1 link_mycavi">
+            <a href={`https://mycavi.com?referer=${site.code_site}`} target="_blank" class="link_white" > Powered by MyCavi </a>
+        </div>
+    </div>
+</div>
+<style is:global>
+.footer-style-1--top-right{padding: 30px 50px;}
+.footer-style-1--top-left{
+  position: relative;
+  padding: 40px 50px 40px 50px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #FFFFFF;
+  overflow: hidden;
+}
+.footer-style-1--top-left::after{
+  content: " ";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 1;
+}
+@media screen and (min-width: 991px){
+  .footer-style-1--top-left {padding: 40px 50px 40px 15%;}
+}
+</style>

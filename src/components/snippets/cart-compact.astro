@@ -1,0 +1,42 @@
+---
+const { site, active_user } = Astro.props;
+const price_show = site.settings.config.show_price;
+---
+
+<div id="cart" class={`sidebar responsive sidebar-cart sidebar-${site.settings.snippet.cart_style} transition-ease shadow`}>
+  <div class="sidebar-cart--header">
+    <span id="detail_count">
+      <i class="bi bi-cart me-2"></i><strong id="total_detail">0</strong>
+    </span>
+    <span id="close_cart">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </span>
+    <h5 class="text-center"><strong>CARRITO</strong></h5>
+  </div>
+
+  <div class="sidebar-cart--body" id="details_cart">
+    <div id="details" class="px-3"></div>
+  </div>
+
+  <div class="sidebar-cart--footer p-3">
+    <div class="row">
+      {(price_show === 1 || (price_show === 0 && active_user)) ? (
+        <>
+          <div class="col-5">
+            <h6 class="font-small mb-0">TOTAL:</h6>
+          </div>
+          <div class="col-7 text-end">
+            <p class="font-small mb-0">$<span id="total_cart" class="font-small"></span></p>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
+      <div class="col-12 mt-2">
+        <button type="button" class="btn btn-sm btn-mycavi w-100 py-2" onclick="CheckCart(this);">
+          <strong>COTIZAR</strong>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+---
+const { post, unavailable } = Astro.props;
+const imageSrc = post?.image || unavailable;
+const hasContent = post?.title || post?.content || post?.link;
+---
+{post.snippet_code ==="post-basic-style-1" && (
+    <div class={`post_basic_box post_basic-style-1 col-12 col-md-6 col-lg-${post?.width_column ?? 4} my-4`} data-aos="fade-up">
+    {post?.image && (
+        <div class="post_basic-style-1--img">
+        <img src={imageSrc} onError={`this.src='${unavailable}'`} class="w-100" alt={post?.alt_image ?? post?.title} />
+        </div>
+    )}
+
+    {hasContent && ( 
+        <div class="post_basic-style-1--data mt-3"> 
+            {post?.title && (<h4 class="post_basic-style-1--ttl"><strong class="secondary-font">{post.title}</strong></h4>)}
+            {post?.content && ( <div class="post_basic-style-1--descrp" set:html={post.content} /> )}
+            {post?.link && ( <a href={post.link} target={post.target} class="btn btn-mycavi"> Ver más <i class="bi bi-chevron-right ms-2"></i> </a> )}
+        </div>
+    )}
+    </div>
+)}
+
+{!post.snippet_code && (
+    <div class={`post_basic_box post_basic-style-1 col-12 col-md-6 col-lg-${post?.width_column ?? 4} my-4`} data-aos="fade-up">
+    {post?.image && (
+        <div class="post_basic-style-1--img">
+        <img src={imageSrc} onError={`this.src='${unavailable}'`} class="w-100" alt={post?.alt_image ?? post?.title} />
+        </div>
+    )}
+
+    {hasContent && ( 
+        <div class="post_basic-style-1--data mt-3"> 
+            {post?.title && (<h4 class="post_basic-style-1--ttl"><strong class="secondary-font">{post.title}</strong></h4>)}
+            {post?.content && ( <div class="post_basic-style-1--descrp" set:html={post.content} /> )}
+            {post?.link && ( <a href={post.link} target={post.target} class="btn btn-mycavi"> Ver más <i class="bi bi-chevron-right ms-2"></i> </a> )}
+        </div>
+    )}
+    </div>
+)}

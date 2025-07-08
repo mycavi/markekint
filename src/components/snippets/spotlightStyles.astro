@@ -1,0 +1,149 @@
+---
+const { spot, unavailable } = Astro.props;
+const imageSrc = spot.image || unavailable;
+const widthCol = spot.width_column || 6;
+---
+{spot.snippet_code === 'spotlight-style-1' && (
+  <div class={`spotlight_box spotlight-style-1 col-12 col-md-6 col-lg-${widthCol} my-4`} data-aos="fade-up">
+    <a href={spot.link} target={spot.target}>
+      <div class="spotlight-style-1--img">
+        <img loading="lazy" src={imageSrc} onError={() => (this.src = unavailable)} class="w-100" alt={spot.alt_image} />
+      </div>
+      {(spot.title || spot.subtitle || spot.content) && (
+        <div class="spotlight-style-1--data" style={`color:${spot.color_text}`}> 
+          {spot.title && <h4 class="spotlight-style-1--ttl" style={`color:${spot.background_color}`}><strong class="secondary-font">{spot.title}</strong></h4>}
+          {spot.subtitle && <h6 class="spotlight-style-1--subttl">{spot.subtitle}</h6>}
+          {spot.content && <p class="spotlight-style-1--descrp mb-0">{spot.content}</p>}
+        </div>
+      )}
+    </a>
+  </div>
+)}
+
+{spot.snippet_code === 'spotlight-style-2' && (
+  <div class={`spotlight_box spotlight-style-2 col-12 col-md-6 col-lg-${widthCol} my-4`} data-aos="fade-up">
+    <a class="spotlight-style-2--link" href={spot.link} target={spot.target} content={(spot.title || spot.subtitle || spot.content) ? 'active' : undefined}>
+      <div class="spotlight-style-2--img">
+        <img loading="lazy" src={imageSrc} onError={() => (this.src = unavailable)} class="w-100" alt={spot.alt_image} />
+      </div>
+      {(spot.title || spot.subtitle || spot.content) && (
+        <div class="spotlight-style-2--data" style={`color:${spot.color_text}`}> 
+          {spot.subtitle && <h6 class="spotlight-style-2--subttl">{spot.subtitle}</h6>}
+          {spot.title && <h4 class="spotlight-style-2--ttl" style={`color:${spot.background_color}`}><strong class="secondary-font">{spot.title}</strong></h4>}
+          {spot.content && <p class="spotlight-style-2--descrp">{spot.content}</p>}
+          {spot.link && <span class="btn btn-mycavi">Ver más <i class="bi bi-chevron-right ms-2"></i></span>}
+        </div>
+      )}
+    </a>
+  </div>
+)}
+
+{spot.snippet_code === 'spotlight-style-3' && (
+  <div class={`spotlight_box spotlight-style-3 col-12 col-md-6 col-lg-${widthCol} my-4`} data-aos="fade-up">
+    <a class="spotlight-style-3--link" href={spot.link} target={spot.target}>
+      <div class="spotlight-style-3--img">
+        <img loading="lazy" src={imageSrc} onError={() => (this.src = unavailable)} class="w-100" alt={spot.alt_image} />
+      </div>
+      {(spot.title || spot.subtitle || spot.content) && (
+        <>
+          <div class="spotlight-style-3--background transition-ease" style={`background-color:${spot.background_color}`}></div>
+          <div class="spotlight-style-3--data transition-ease" style={`color:${spot.color_text}`}> 
+            {spot.subtitle && <h6 class="spotlight-style-3--subttl">{spot.subtitle}</h6>}
+            {spot.title && <h4 class="spotlight-style-3--ttl"><strong class="secondary-font">{spot.title}</strong></h4>}
+            {spot.content && <p class="spotlight-style-3--descrp">{spot.content}</p>}
+            {spot.link && <span class="mt-4">Ver más<i class="bi bi-chevron-right ms-2"></i></span>}
+          </div>
+        </>
+      )}
+    </a>
+  </div>
+)}
+
+{spot.snippet_code === 'spotlight-style-4' && (
+  <div class={`spotlight_box spotlight-style-4 col-12 col-lg-${widthCol} my-4`}>
+    <div class="row align-items-center">
+      <div class="col-12 col-md-6 spotlight-style-4--img" data-aos="fade-up">
+        <img loading="lazy" src={imageSrc} onError={() => (this.src = unavailable)} class="w-100" alt={spot.alt_image} />
+      </div>
+      <div class="col-12 col-md-6 spotlight-style-4--data mt-3 mt-md-0" data-aos="fade-up">
+        {spot.subtitle && <h6 class="spotlight-style-4--subttl" data-aos="flip-up" data-aos-delay="300" style={`color:${spot.color_text}`}>{spot.subtitle}</h6>}
+        {spot.title && <h3 class="spotlight-style-4--ttl" style={`color:${spot.background_color}`}><strong class="secondary-font">{spot.title}</strong></h3>}
+        {spot.content && <p class="spotlight-style-4--descrp">{spot.content}</p>}
+        {spot.link && <a href={spot.link} target={spot.target} class="btn btn-mycavi mt-4">Ver más<i class="bi bi-chevron-right ms-2"></i></a>}
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+.spotlight-style-2--link,.spotlight-style-3--link{ position: relative; display: block;}
+/*spotlight-style-1*/
+.spotlight-style-1--data{ padding: 15px 15px; border: 1px solid #f7f7f7; }
+.spotlight-style-1--ttl::after{
+  content: " ";
+  position: relative; 
+  width: 50px;
+  height: 2px;
+  background-color: #d1d1d1;
+  display: block;
+  margin-top: 0px;
+}
+.spotlight-style-1--subttl{color: #6f6f6f; }
+/*spotlight-style-2*/
+.spotlight-style-2--link[content="active"]::after{
+  content: " ";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: rgb(0, 0, 0);
+  background: -moz-linear-gradient(42deg, rgba(0, 0, 0, 0.8) 9%, rgba(255, 255, 255, 0) 55%);
+  background: -webkit-linear-gradient(42deg, rgba(0, 0, 0, 0.8) 9%, rgba(255, 255, 255, 0) 55%);
+  background: linear-gradient(42deg, rgba(0, 0, 0, 0.8) 9%, rgba(255, 255, 255, 0) 55%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#000000", endColorstr="#ffffff", GradientType=1);
+  z-index: 0;
+}
+.spotlight-style-2--data{
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 15px 15px;
+  bottom: 0;
+  z-index: 1;
+}
+.spotlight-style-2--subttl{ opacity: .8;margin: 0; }
+/*spotlight-style-3*/
+.spotlight-style-3--background{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+.spotlight-style-3--data{
+  padding: 25px 15px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (min-width: 991px){
+  .spotlight-style-3--background { visibility: hidden; opacity: 0; z-index: 0; }
+  .spotlight-style-3--data {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    visibility: hidden;
+    opacity: 0;
+  }
+  .spotlight-style-3--link:hover .spotlight-style-3--data{ visibility: visible; opacity: 1; }
+  .spotlight-style-3--link:hover .spotlight-style-3--background { visibility: visible; opacity: 0.8; }
+}
+/*spotlight-style-4*/
+.spotlight-style-4--subttl{ margin-bottom: 0; font-size: 14px; font-weight: bold; }
+</style>

@@ -1,0 +1,41 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SeoMeta from "../../components/SeoMeta.astro";
+
+const {site,  active_user } = Astro.locals;
+const dynamicKey = Astro.cookies.get("dinamic_key")?.value;
+
+const url = new URL(Astro.request.url);
+const pathSegments = url.pathname.replace(/^\/busqueda\//, '').split('/');
+
+const [ category = 'todo', color = 'todo', word = 'nan', from = '0', to = '0', order = 'predeterminado', view = '24', page = '1' ] = pathSegments;
+const keyword = word === 'nan' ? '' : decodeURIComponent(word.replace(/\+/g, ' '));
+
+const dataPost = { token: dynamicKey, category, color, keyword, price_min: from, price_max: to, order, show: view, page };
+
+if (active_user) {
+  dataPost.customer_token = Astro.cookies.get("customer")?.value;
+}
+
+const filters = { category, color, keyword: word, price_min: from, price_max: to, order, show: view, page };
+---
+<Layout title="Búsqueda">
+    <SeoMeta slot="seo"/>
+    <div class="container">
+        <div class="row align-items-center pt-3">
+            <div class="col-12">
+                <h1 class="secondary-font color-mycavi mb-4" data-aos="flip-up">Búsqueda</h1>
+            </div>
+        </div>
+        <div id="filter_box_top" class="filter_box filter_box--top" data-aos="flip-up"> </div>
+        <hr>
+        <div id="products_box" class="row"></div>
+        <hr>
+        <div id="filter_box_bottom" class="filter_box filter_box--bottom mb-4" data-aos="flip-up"></div>
+    </div>
+</Layout>
+
+<Fragment slot="scripts">
+  <script type="application/json" id="filters-data" set:html={JSON.stringify({ dataPost, filters })}></script>
+  <script type="module" src={`/js/page-search.js`}></script>
+</Fragment>

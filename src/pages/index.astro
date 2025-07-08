@@ -1,0 +1,79 @@
+---
+import { config } from '../server/js/config.js';
+import { requestWithCache } from '../server/js/helpers.js';
+import Layout from '../layouts/Layout.astro';
+import SeoMeta from '../components/SeoMeta.astro';
+import SpotlightStyles from '../components/snippets/spotlightStyles.astro';
+import CarruselStyles from '../components/snippets/carruselStyles.astro';
+
+const dynamicKey = Astro.cookies.get('dinamic_key')?.value;
+const {site} = Astro.locals;
+
+let page;
+try {
+    const data = await requestWithCache(config.api_url + '/page/detail', 'cachedPageHome', dynamicKey, { 'code_page': 'inicio' });
+    if (data.result) {
+        page = data;
+    }else{
+        // redirect 
+    }
+} catch (error) {
+    console.error(error);
+}
+
+const { thumb_big = 'https://mycavi.com/public/thumb_big.jpg', thumb_small = 'https://mycavi.com/public/thumb_small.jpg' } = Astro.props;
+const getImages = (slide) => {
+  let image = thumb_big;
+  let image_extra = thumb_small;
+
+  if (slide.image) image = slide.image;
+  if (slide.image && !slide.image_extra) image_extra = slide.image;
+  if (slide.image_extra) image_extra = slide.image_extra;
+
+  return { image, image_extra };
+};
+---
+<Layout title={page.page_data.title_page}>
+    <SeoMeta slot="seo" page={page.page_data}/>
+    {page.slider && (
+        <div id="slide_home" class="splide">
+            <div class="splide__track">
+                <ul class="splide__list">
+                {page.slider.map((slide, key) => {
+                    const { image, image_extra } = getImages(slide);
+                    return (
+                        <li class="splide__slide" key={key}>
+                        <a href={slide.link ?? '#'} target={slide.target ?? '_self'}>
+                            <picture class="w-100">
+                                <source srcSet={image_extra} media="(max-width: 720px)" />
+                                <source srcSet={image} />
+                                <img src={image} class="w-100" alt={slide.alt_image ?? ''} loading="lazy"/>
+                            </picture>
+                        </a>
+                        </li>
+                    );
+                    })}
+                </ul>
+            </div>
+            <div class="splide__progress"><div class="splide__progress__bar"></div></div>
+        </div>
+    )}
+    
+    <CarruselStyles code_carrusel="featured" style={site.settings.snippet.carrusel_products}/>
+
+    {page?.spotlight?.length > 0 && (
+    <div id="spotlight">
+        <div class="container">
+        <div class="row">
+            {page.spotlight.map((spot, key) => ( <SpotlightStyles spot={spot} key={key} unavailable="/public/no-disponible.jpg" /> ))}
+        </div>
+        </div>
+    </div>
+    )}
+
+    <CarruselStyles code_carrusel="month" style={site.settings.snippet.carrusel_products}/>
+</Layout>   
+
+<Fragment slot="scripts">
+    <script type="module" src={`/js/page-home.js?v=${Date.now()}`}></script>
+</Fragment>

@@ -1,0 +1,122 @@
+---
+const { logotype, app_name, active_user } = Astro.props;
+---
+<!-- Agregar dirección -->
+<div class="modal fade" id="modal-add-addresses-profile" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<!-- Modal Header -->
+	      	<div class="modal-header row align-items-center" style="border:0">
+				<div class="col-5">
+	        		<img src={logotype} class="img-fluid" width="140px" alt={app_name}>
+	        	</div>
+				<div class="col-6 text-end">
+					<h5 class="ttl_font mb-0">AGREGAR DIRECCIÓN</h5>
+				</div>
+				<div class="col-1">
+					<button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+			</div>
+			<!-- Modal Body -->
+			<div class="modal-body">
+				<form id="form-add-address" class="customer-form row">
+					<div class="form-group mb-3 col-12">
+						<label for="form-add-street">Calle:</label>
+						<input type="text" class="form-control" id="form-add-street" name="street" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-5">
+						<label for="form-add-col">Colonia:</label>
+						<input type="text" class="form-control" id="form-add-col" name="col" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-3">
+						<label for="form-add-num">Número Exterior:</label>
+						<input type="number" class="form-control" id="form-add-num" name="num_ext" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-4">
+						<label for="form-add-num-int">Número Interior: (opcional)</label>
+						<input type="number" class="form-control" id="form-add-num-int" name="num_int">
+					</div>
+					<div class="form-group mb-3 col-md-5">
+						<label for="form-add-street">Estado:</label>
+						<input type="text" class="form-control" id="form-add-state" name="state" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-3">
+						<label for="form-add-col">C.P.:</label>
+						<input type="number" class="form-control" id="form-add-cp" name="cp" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-4">
+						<label for="form-add-num">Teléfono:</label>
+						<input type="number" class="form-control" id="form-add-tel" name="tel" data-rule="phone|required">
+					</div>
+					<div class="col-12 text-end">
+						<div class="alert-form"></div>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CERRAR</button>
+						<button type="submit" class="btn btn-mycavi">AGREGAR</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Editar dirección -->
+<div class="modal fade" id="modal-edit-address-profile" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content no-border">
+			<!-- Modal Header -->
+	      	<div class="modal-header row align-items-center" style="border:0">
+				<div class="col-5">
+	        		<img src={logotype} class="img-fluid" width="140px" alt={app_name}>
+	        	</div>
+				<div class="col-6 text-end">
+					<h5 class="ttl_font mb-0">EDITAR DIRECCIÓN</h5>
+				</div>
+				<div class="col-1">
+					<button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+			</div>
+			<!-- Modal Body -->
+            <div class="modal-body">
+				<form id="form-edit-address" class="customer-form row">
+					<div class="form-group mb-3 col-12">
+						<label for="form-edit-street">Calle:</label>
+						<input type="text" class="form-control" id="form-edit-street" name="street" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-5">
+						<label for="form-edit-col">Colonia:</label>
+						<input type="text" class="form-control" id="form-edit-col" name="col" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-3">
+						<label for="form-edit-num">Número Exterior:</label>
+						<input type="number" class="form-control" id="form-edit-num" name="num_ext" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-4">
+						<label for="form-edit-num-int">Número Interior: (opcional)</label>
+						<input type="number" class="form-control" id="form-edit-num-int" name="num_int">
+					</div>
+					<div class="form-group mb-3 col-md-5">
+						<label for="form-edit-street">Estado:</label>
+						<input type="text" class="form-control" id="form-edit-state" name="state" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-3">
+						<label for="form-edit-col">C.P.:</label>
+						<input type="number" class="form-control" id="form-edit-cp" name="cp" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-md-4">
+						<label for="form-edit-num">Teléfono:</label>
+						<input type="number" class="form-control" id="form-edit-tel" name="tel" data-rule="phone|required">
+					</div>
+					<div class="col-12 text-end">
+                        {active_user ? (
+                            <input type="hidden" class="form-control" id="form-edit-id" name="id_address" value=''>
+                        ) : (
+                            <></>
+                        )}
+						<div class="alert-form"></div>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CERRAR</button>
+						<button type="submit" class="btn btn-mycavi">EDITAR</button>
+					</div>
+				</form>
+            </div>
+        </div>
+    </div>
+</div>

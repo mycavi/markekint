@@ -1,0 +1,60 @@
+---
+import { config } from '../../server/js/config.js';
+import { requestWithCache } from '../../server/js/helpers.js';
+import Layout from '../../layouts/Layout.astro';
+import SeoMeta from '../../components/SeoMeta.astro';
+
+import PostsBasicStyles from '../../components/snippets/PostsBasicStyles.astro';
+import PostsDownloadableStyles from '../../components/snippets/PostsDownloadableStyles.astro';
+
+const { code } = Astro.params;
+const dynamicKey = Astro.cookies.get('dinamic_key')?.value;
+
+let page;
+let posts = {};
+try {
+    const data = await requestWithCache(config.api_url + '/page/detail', 'cachedPage'+code, dynamicKey, { 'code_page': code });    
+    if (!data.result) {
+      throw Astro.redirect('/page-not-found', 302);
+    }
+    if (data.page_data.template) {
+      throw Astro.redirect(`${data.page_data.slug_page}`, 302);
+    }
+    page = data;
+    if (page.basic) posts.basic = page.basic;
+    if (page.downloadable) posts.downloadable = page.downloadable;
+} catch (error) {
+    throw Astro.redirect('/404', 302);
+}
+---
+<Layout title={page.page_data.title_page}>
+    <SeoMeta slot="seo" page={page.page_data}/>
+   
+    {page.page_data.banner_page && (
+        <div class="banner_page mb-5">
+            <img src={page.page_data.banner_page} alt={page.page_data.title_page} class="w-100" />
+        </div>
+    )}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12" data-aos="fade-up">
+            <h1 class="secondary-font color-mycavi mb-4" data-aos="flip-up"> {page.page_data.title_page} </h1>
+            <div set:html={page.page_data.content_page} />
+            </div>
+        </div>
+    </div>
+
+    {Object.keys(posts).length > 0 && (
+        <div id="post-basic">
+            <div class="container">
+            {posts.basic && (
+                <div class="row">{posts.basic.map((post, key) => (<PostsBasicStyles post={post} key={key} unavailable="/public/no-disponible.jpg"/>))}</div>
+            )}
+            {posts.downloadable && (
+                <div class="row">{posts.downloadable.map((post, key) => (<PostsDownloadableStyles post={post} key={key} unavailable="/public/no-disponible.jpg"/>))}</div>
+            )}
+            </div>
+        </div>
+    )}
+</Layout>   

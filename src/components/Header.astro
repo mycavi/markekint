@@ -1,0 +1,123 @@
+---
+import { config } from '../server/js/config.js';
+import { requestWithCache, detectDevice } from '../server/js/helpers.js';
+import { Renders } from '../server/js/components/theme.js';
+
+const { site, active_user, categories } = Astro.props;
+const dynamicKey = Astro.cookies.get('dinamic_key')?.value;
+
+const header_style = site.settings.snippet.header_style;
+let header_items = '';
+let submenu_collections = '';
+let submenu_collections_columns = '1';
+let submenu_categories = '';
+let submenu_categories_columns = '1';
+const device = detectDevice(Astro.request);
+
+try {
+    const response = await requestWithCache(config.api_url + '/site/menu', 'cachedMenuHeader', dynamicKey, { 'location': 'header' });
+    if (response.result) {
+        const render = new Renders(site);
+        if (response.menu) {
+            header_items = render.menu(response.menu, "menu_item", "menu_link");
+        }
+        if (response.collections) {            
+            const total = response.collections.length;
+            submenu_collections= render.submenu("coleccion", response.collections, Astro.url.origin);
+            
+            if (total > 20) submenu_collections_columns = "7";
+            else if (total > 14) submenu_collections_columns = "3";
+            else if (total > 7) submenu_collections_columns = "2";
+        }
+    }
+} catch (error) {
+    console.error(error);
+}
+
+try {
+    const render = new Renders(site);
+    const total = categories.length;
+
+    if (total > 20) submenu_categories_columns = "7";
+    else if (total > 14) submenu_categories_columns = "3";
+    else if (total > 7) submenu_categories_columns = "2";
+
+    submenu_categories = render.submenu("categoria", categories, Astro.url.origin);
+} catch (error) {
+    console.error(error);
+}
+---
+<header id="header" class={`fixed-top ${header_style ?? ''}`}>
+	{site.settings.snippet.alert_active && (
+		<div class="header__alert text-center" style={`background-color:${site.settings.snippet.alert_bg};color:${site.settings.snippet.alert_color};`}>
+			<Fragment set:html={site.settings?.snippet?.alert_txt} />
+		</div>
+	)}
+			
+	<div class={`header__main_box ${header_style}--main`}>
+		<div class={`header__logo ${header_style}--logo order-lg-1`}>
+			<a href="/"><img src={site.logo_site} alt={config.app_name} class="header_logo_img img-fluid" /></a>
+		</div>
+
+		<div id="info_session" class={`header__user-options ${header_style}--user-options order-lg-3 text-end`}>
+			<span id="search_btn" attr="sidebar-search" class={`${header_style}--btn ${header_style}--search sidebar_btn_open ${site.settings.design.sidebar_search === 'static' ? 'd-lg-none' : ''}`}> <i class="bi bi-search"></i> </span>
+
+			<span id="count_cart" class={`${header_style}--btn ${header_style}--cart`}>
+				<img class="header__cart_icon" src="/shopping-intro.gif" width="20px" alt="Carrito"/>
+				<span id="count_prod" class={`header__cart_count ${header_style}--cart-count`}>00</span>
+			</span>
+
+			{active_user ? ( <div style="display: inline-block;">
+				{/* Notification */}
+				<div class="dropdown header__dropdown">
+					<button class={`btn btn-notification ${header_style}--btn ${header_style}--btn-notification`} id="notificationBox" data-bs-toggle="dropdown" aria-expanded="false">
+						<i class="btn-notification--icon bi bi-bell"></i>
+					</button>
+					<div class="dropdown-menu notification__box" aria-labelledby="notificationBox">
+						<div class="notification__box_inactive"><strong class="mb-0">Sin notificaciones</strong></div>
+					</div>
+					</div>
+					{/* User */}
+					<div class="dropdown header__dropdown">
+					<button class={`btn btn-user ${header_style}--btn-user active-user`} id="menuUser" data-bs-toggle="dropdown" aria-expanded="false">
+						<i class="bi bi-person-circle me-lg-2"></i><span class="d-none d-sm-inline">Mi Cuenta</span> <i class="bi bi-chevron-down"></i>
+					</button>
+					<div class="dropdown-menu user_menu__box" aria-labelledby="menuUser">
+						<a class="dropdown-item user_menu__item" href="/perfil"><i class="bi bi-person user_menu__icon"></i> Perfil</a>
+						<a class="dropdown-item user_menu__item" href="/mis-cotizaciones/"><i class="bi bi-card-checklist user_menu__icon"></i> Mis cotizaciones</a>
+						<a type="button" class="dropdown-item user_menu__item user_menu__item--logout close-session"><i class="bi bi-box-arrow-in-right user_menu__icon"></i> Salir</a>
+					</div>
+				</div>
+			</div> ) : ( <span id="data_user" class={`btn btn-user ${header_style}--btn-user`} data-bs-toggle="modal" data-bs-target="#modaLogin"> <i class="bi bi-person-circle me-lg-2"></i> <span class="d-none d-sm-inline">Inicia Sesión</span> </span> )}
+
+			<span id="menu_btn" class={header_style === 'header-style-1' ? 'd-lg-none' : ''}>
+				<button class={`btn btn-menu-open ${header_style}--btn-menu`}> <i class="bi bi-list"></i> </button>
+			</span>
+		</div>
+
+		{header_style === 'header-style-1' && (
+			<div id="menu_container" class={`header__menu ${header_style}--menu order-lg-2 ${device.isSmall? 'responsive' : ''}`}>
+				<button class="btn btn-menu-close d-lg-none"><i class="bi bi-x-lg"></i></button>
+				<ul id="menu_header" set:html={header_items}></ul>
+			</div>
+		)}
+
+		<div id="alert-cart" class="alert alert-info alert-cart text-center"></div>
+	</div>
+
+    {header_style === 'header-style-2' && (
+		<div id="menu_container" class={`header__menu ${header_style}--menu transition-ease`}>	
+			<ul id="menu_header" set:html={header_items}></ul>
+		</div>
+	)}
+
+    <!-- submenus -->
+	<div id="sidebar-categorias"  class={`submenu__container transition-ease ${header_style}-submenu-container`}>
+		<span class="submenu_close"><i class="bi bi-x-lg"></i></span>
+		<ul id="submenu-categorias" data-column={submenu_categories_columns} class={`submenu ${header_style}-submenu`} set:html={submenu_categories}></ul>
+	</div>
+	<div id="sidebar-colecciones" class={`submenu__container transition-ease ${header_style}-submenu-container`}>
+		<span class="submenu_close"><i class="bi bi-x-lg"></i></span>
+		<ul id="submenu-colecciones" data-column={submenu_collections_columns} class={`submenu ${header_style}-submenu`} set:html={submenu_collections}> </ul>
+	</div>	
+</header>

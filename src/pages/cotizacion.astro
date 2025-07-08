@@ -1,0 +1,177 @@
+---
+import { config } from "../server/js/config.js";
+import { formatNumber } from "../server/js/helpers.js";
+import Layout from "../layouts/Layout.astro";
+import SeoMeta from "../components/SeoMeta.astro";
+import ModalsAddress from '../components/snippets/modal-address.astro';
+import axios from 'axios';
+
+let order;
+let details;
+let addresses;
+const {site, user, email_config, active_user} = Astro.locals;
+const dynamicKey = Astro.cookies.get("dinamic_key")?.value;
+const cartKey = Astro.cookies.get("cart")?.value;
+const post_data = { 'token': dynamicKey, 'ui_order': cartKey, 'customer_token': user.session_token};
+try {
+    const { data } = await axios.post(`${config.api_url}/cart/details`, post_data);
+    if (data.status){
+        order = data.order; 
+        details = data.details;
+
+        const res = await axios.post(`${config.api_url}/address/list`, { token: dynamicKey, customer_token: user.session_token });
+        if (res.data.status) { addresses = res.data.address; }
+    } 
+} catch (error) {
+    console.error(error);
+}
+---
+
+<Layout title="Cotizador">
+  <SeoMeta slot="seo" />
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12 my-4">
+        <h1 class="secondary-font color-mycavi" data-aos="flip-up">Cotizador</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 pb-3">
+        <h6 class="secondary-font"><strong>Resumen</strong></h6>
+        <p class="font-small">*Los precios son de carácter informativo por lo que están sujetos a cambios sin previo aviso y <strong>son más IVA.</strong></p>
+        {
+          details?.map((value) => (
+            <>
+              <div class="row align-items-center">
+                <div class="col-3">
+                  <a href={`/producto/${value.code_product}`} class="pvw_product_image">
+                    <img class="w-100" src={value.imagen} onError={(e) => e.target.src = 'https://mycavi.com/public/no-disponible.jpg'} alt={value.name} />
+                  </a>
+                </div>
+                <div class="col-6">
+                  <p class="mb-0"><strong>{value.name}</strong></p>
+                  <p class="pvw_product__code mb-1">{value.code_product}</p>
+                  <p class="pvw_product__color mb-0">Color: {value.name_color}</p>
+                  {value.name_printing && <p class="mb-0">Impresión: {value.name_printing}</p>}
+                  {(site.settings.config.show_price === 0 || site.settings.config.show_price === 1)
+                    ? <p class="pvw_product__price">{value.qty} x <span class="pvw_product__price">${formatNumber(value.price)}</span></p>
+                    : <p class="pvw_product__price">Cantidad: {value.qty}</p>}
+                  {value.note && (
+                    <div class="pvw_note_highlight mt-2">
+                      <i class="bi bi-sticky-fill"></i> <strong>Nota:</strong> {value.note}
+                    </div>
+                  )}
+                </div>
+                {(site.settings.config.show_price === 0 || site.settings.config.show_price === 1) && (
+                  <div class="col-3">
+                    <span class="pvw_product__price">${formatNumber(value.subtotal)}</span>
+                  </div>
+                )}
+              </div>
+              <hr />
+            </>
+          ))
+        }
+      </div>
+
+      <div id="shipping_address" class="col-md-6">
+        <h6 class="secondary-font mb-3"><strong>Datos de Contacto</strong></h6>
+        <div class="row">
+          <div class="col-12">
+            <p class="address mb-0">
+              <strong>Nombre: </strong>{user.name}<br />
+              <strong>Correo Electrónico: </strong>{user.user_email}<br />
+              <strong>Empresa: </strong>{user.company}<br />
+              <strong>Teléfono: </strong>{user.tel}
+            </p>
+          </div>
+        </div>
+
+        {addresses?.length > 0 && (
+          <>
+            <hr />
+            <h6 class="secondary-font"><strong>Datos de Envío</strong></h6>
+            <p class="font-small">Información Opcional</p>
+            <div class="row" id="validate_address">
+              {addresses.map((val, i) => (
+                <div class="col-12 col-md-6 mb-3" key={val.id_address}>
+                  <div class="user_address order_address transition-ease" id={`address_${val.id_address}`} data-id={val.id_address}>
+                    <div class="px-3">
+                      <p class="mt-4"><strong class="font-small">Dirección</strong><br /> {val.street}, No.Ext {val.num_ext}, No.Int {val.num_int}, {val.col}, C.P {val.cp}</p>
+                      <p><i class="bi bi-phone me-1"></i> {val.phone}</p>
+                    </div>
+                    <div class="user_edit_address_btn">
+                      <div class="btn btn-mycavi user_edit_address__btn transition-ease">
+                        <span class="user_edit_address_btn_txt">Seleccionar</span>
+                        <span class="user_edit_address_btn_icon">
+                          <label>
+                            <input type="radio" name="user_addr" id={`add_${val.id_address}`} value={val.id_address} />
+                          </label>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {(site.settings.config.show_price === 0 || site.settings.config.show_price === 1) && (
+          <div class="row">
+            <div class="col-12 text-end">
+              <hr />
+              <h5 class="mb-0"><strong>${formatNumber(order.total)}</strong></h5>
+            </div>
+          </div>
+        )}
+
+        <div class="row mt-3">
+          <div class="col-12" id="msg-send"></div>
+          <div class="col-12">
+            <button class="btn btn-mycavi btn-sm w-100 sent-order" data-token={email_config}>Enviar Cotización</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+#shipping_address{
+	background: #f6f6f6;
+	padding: 35px 35px 40px;
+	border-radius: 25px;
+	margin-bottom: 25px;
+}
+.user_address strong, .address strong { font-weight: 600;}
+.pvw_note_highlight {
+	background-color: #fff8e1;
+	border-left: 4px solid #ffc107;
+	padding: 6px 10px;
+	border-radius: 5px;
+	font-size: 14px;
+	margin-top: 6px;
+}
+.pvw_note_highlight i {color: #ffc107;margin-right: 5px;}
+</style>
+
+<Fragment slot="scripts">
+    <script>
+    document.querySelectorAll('.order_address').forEach(el => {
+        el.addEventListener('click', () => {
+            const id = el.dataset.id;
+            SelectAddress(id);
+        });
+    });
+    document.querySelector('.sent-order').addEventListener('click', function (e) {
+        const token = this.dataset.token;
+        SendOrder(token);
+    });
+    </script>
+</Fragment>
+
+<Fragment slot="modals">
+<ModalsAddress logotype={site.logo_site} app_name={config.app_name} active_user={active_user} />
+</Fragment>

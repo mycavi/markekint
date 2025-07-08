@@ -1,0 +1,84 @@
+---
+import ModalLogin from './snippets/modal-login.astro';
+const { active_user, logotype, app_name, whats_app } = Astro.props;
+---
+{!active_user && ( <ModalLogin logotype={logotype} app_name={app_name}/> )}
+
+<div class="modal fade" id="modalOrderWhatsOrSession">
+	<div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+	      <div class="modal-header row align-items-center" style="border:0">
+				<div class="col-5">
+	        		<img src={logotype} class="img-fluid" width="140px" alt={app_name}>
+	        	</div>
+				<div class="col-6 text-end">
+					<h5 class="ttl_font mb-0">ENVIAR COTIZACIÓN</h5>
+				</div>
+				<div class="col-1">
+					<button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+			</div>
+	      <div class="modal-body">
+                <div class="row justify-content-center">
+                    <div class="col-11 col-lg-9">
+                        <button type="button" class="btn btn-mycavi w-100" data-bs-target="#modaLogin" data-bs-toggle="modal">¿Ya eres cliente?, inicia sesión</button>
+                        <button type="button" class="btn btn-dark mt-2 w-100" data-bs-target="#modalOrderWhatsapp" data-bs-toggle="modal">Cotizar por WhatsApp <i class="bi bi-whatsapp"></i></button>
+                        <button type="button" class="btn py-0 mt-3 w-100" data-bs-target="#modalRegister" data-bs-toggle="modal">No tengo cuenta, <span class="text-primary">crear</span></button><br>
+                    </div>
+                </div>
+	      </div>
+	    </div>
+	</div>
+</div>
+<!-- ORDER WHATS -->
+<div class="modal fade" id="modalOrderWhatsapp">
+	<div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+	      <div class="modal-header row align-items-center" style="border:0">
+				<div class="col-5">
+	        		<img src={logotype} class="img-fluid" width="140px" alt={app_name}>
+	        	</div>
+				<div class="col-6 text-end">
+					<h5 class="ttl_font mb-0">COTIZACIÓN POR WHATSAPP</h5>
+				</div>
+				<div class="col-1">
+					<button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+			</div>
+	      <div class="modal-body">
+				<form id="formOrderWhats" class="row">
+					<div class="form-group mb-3 col-12">
+						<label for="register-name">Nombre:</label>
+						<input type="text" class="form-control" id="orderWhatsName" name="name" data-rule="required">
+					</div>
+					<div class="form-group mb-3 col-12">
+						<label for="register-email">Correo electrónico:</label>
+						<input type="email" class="form-control" id="orderWhatsEmail" name="email" data-rule="email|required">
+					</div>
+					<div class="form-group mb-3 col-12">
+						<label for="register-phone">Teléfono:</label>
+						<input type="tel" class="form-control" id="orderWhatsPhone" name="phone" data-rule="phone|required">
+					</div>
+					<div class="col-12 text-end">
+						<div id="orderWhatsNameAlert"></div>
+						<input type="hidden" id="app_name" value={app_name}>
+						<input type="hidden" id="whats_app" value={whats_app}>
+						<button type="submit" class="btn btn-mycavi">ENVIAR</button><br>
+					</div>
+				</form>
+	      </div>
+	    </div>
+	</div>
+</div>
+<!-- Preview -->
+<div id="previewProduct" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 0 25px 15px;border:0">
+				<h3 class="secondary-font color-mycavi" id="preview-title"></h3>
+				<button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body row"style="padding-top: 0;"></div>
+		</div>
+	</div>
+</div>

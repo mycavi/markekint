@@ -1,0 +1,123 @@
+---
+const { logotype, app_name } = Astro.props;
+const { email_config } = Astro.locals;
+---
+<div class="modal fade" id="modaLogin">
+	<div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+	      <!-- Modal Header -->
+	      <div class="modal-header row align-items-center" style="border:0">
+				<div class="col-5">
+	        		<img src={logotype} class="img-fluid" width="140px" alt={app_name}>
+	        	</div>
+				<div class="col-6 text-end">
+					<h5 class="ttl_font mb-0">INICIAR SESIÓN</h5>
+				</div>
+				<div class="col-1">
+					<button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+			</div>
+	      <!-- Modal body -->
+	      	<div class="modal-body">
+				<form id="login" class="customer-form row">
+					<div class="form-group mb-3 col-12">
+						<label for="user-email">Correo electrónico:</label>
+						<input type="email" class="form-control"  id="user-email" name="email" data-rule="email|required">
+					</div>
+					<div class="form-group mb-3 col-12">
+						<label for="user-pwd">Contraseña:</label>
+						<input type="password" class="form-control" id="user-pwd" name="password" data-rule="required">
+					</div>
+					<input type="hidden" id="login-go-checkout" name="go_checkout" value="0">
+					<div class="col-12 text-end">
+						<div class="alert-form"></div>
+						<button type="submit" class="btn btn-mycavi">INICIAR SESIÓN</button><br>
+						<button type="button" class="btn font-small py-0 mt-4" onclick="ShowNewUser();">No tengo cuenta, <span class="text-primary">crear</span></button><br>
+						<button type="button" class="btn font-small py-0 mt-2" onclick="Recovery();">Olvidé mi contraseña</button>
+					</div>
+				</form>
+	      	</div>
+	    </div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalRegister">
+	<div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+	      <!-- Modal Header -->
+	      <div class="modal-header row align-items-center" style="border:0">
+				<div class="col-5">
+	        		<img src={logotype} class="img-fluid" width="140px" alt={app_name}>
+	        	</div>
+				<div class="col-6 text-end">
+					<h5 class="ttl_font mb-0">REGISTRO</h5>
+				</div>
+				<div class="col-1">
+					<button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+			</div>
+	      <!-- Modal body -->
+	      <div class="modal-body">
+			  <form id="register" class="customer-form row">
+				  <div class="form-group mb-3 col-12">
+					  <label for="register-name">Nombre Completo:</label>
+					  <input type="text" class="form-control" id="register-name" name="name" data-rule="required">
+				  </div>
+				  <div class="form-group mb-3 col-12">
+					  <label for="register-email">Correo electrónico:</label>
+					  <input type="email" class="form-control" id="register-email" name="email" data-rule="email|required">
+				  </div>
+				  <div class="form-group mb-3 col-12">
+					  <label for="register-phone">Teléfono:</label>
+					  <input type="tel" class="form-control" id="register-phone" name="phone" data-rule="phone|required">
+				  </div>
+				  <div class="form-group mb-3 mb-3 col-12">
+					  <label for="company">Empresa:</label>
+					  <input type="text" class="form-control" id="company" name="company" data-rule="required">
+				  </div>
+				  <div class="col-12 text-end">
+					  <div class="alert-form"></div>
+					  <input type="hidden" name="token_data" value={email_config}/>
+					  <button type="submit" class="btn btn-mycavi">CREAR UNA CUENTA</button><br>
+					  <button type="button" class="btn font-small py-0 mt-4" onclick="ShowLogin();">Ya tengo cuenta <span class="text-primary">iniciar sesión</span></button>
+				  </div>
+			  </form>
+	      </div>
+	    </div>
+	</div>
+</div>
+
+<!-- MODAL RECOVERY -->
+<div class="modal fade modal-recovery" id="Recovery">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+			<!-- Modal Header -->
+			<div class="modal-header row align-items-center" style="border:0">
+					<div class="col-5">
+						<img src={logotype} class="img-fluid" width="140px" alt={app_name}>
+					</div>
+					<div class="col-6 text-end">
+						<h5 class="ttl_font mb-0">RECUPERAR CONTRASEÑA</h5>
+					</div>
+					<div class="col-1">
+						<button type="button" class="btn-close px-0" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+				</div>
+			<!-- Modal body -->
+            <div class="modal-body">
+                <form id="recovery" class="customer-form row">
+                    <div class="form-group mb-3 mb-3 col-12">
+                        <label for="recovery-email" class="form-label">Correo electrónico:</label>
+                        <input type="email" class="form-control" id="recovery-email" name="email" data-rule="email|required">
+                    </div>
+                    <div class="mt-4 buttons-recovery">
+                        <div class="alert-form"></div>
+						<input type="hidden" name="token_data" value={email_config}/>
+						<button type="submit" class="btn btn-mycavi">ENVIAR</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CERRAR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

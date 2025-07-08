@@ -1,0 +1,90 @@
+---
+import axios from "axios";
+import { config } from "../../server/js/config.js";
+import { getDecryptedViews, setViewedProduct } from "../../server/js/helpers.js";
+import Layout from "../../layouts/Layout.astro";
+import SeoMeta from "../../components/SeoMeta.astro";
+import ProductDetail from "../../components/product/Detail.astro";
+import ProductGrouped from "../../components/product/DetailGrouped.astro";
+
+const { site, active_user } = Astro.locals;
+const code = Astro.params.code;
+const dynamicKey = Astro.cookies.get("dinamic_key")?.value;
+const customerToken = Astro.cookies.get("customer")?.value;
+
+if (!code) return Response.redirect("/producto-no-encontrado", 302);
+let page_seo ={}
+let title ="Producto"
+let product = null;
+let stock_data = null;
+let viewed_products = [];
+let template = "default";
+
+// Obtener detalles del producto
+const data_post = { token: dynamicKey, code_product: code };
+if (active_user) data_post.customer_token = customerToken;
+
+try {
+    const { data: product_data } = await axios.post(`${config.api_url}/product/detail`, data_post);
+
+    if (product_data.result && product_data.detail) {
+        product = product_data.detail;
+        page_seo = {
+            seo_description : product.description,
+            seo_image : product.imagen
+        }
+
+        title = `${product.name_product} ${product.code_product.toUpperCase()}`;
+
+        const code_product = product.code_product;
+
+        if (site.settings.config.show_by_model === 1) {
+            template = "grouped";
+            product.images = {
+                model: product_data.images?.model,
+                color: product_data.images?.color,
+                aditionals: product_data.images?.aditional,
+            };
+        } else {
+            template = "default";
+            product.images = {
+                model: product_data.model_img,
+                aditionals: product_data.add_img,
+            };
+        }
+
+        const encryptedViews = Astro.cookies.get(config.cookie_preview)?.value;
+        const data_view = getDecryptedViews(encryptedViews) || [];
+        if (!data_view.includes(code_product)) {
+            const set = await setViewedProduct(code_product, dynamicKey);
+            if (set) {
+                data_view.push(code_product);
+                const unique = [...new Set(data_view)];
+                Astro.cookies.set( config.cookie_preview, JSON.stringify(unique), { path: "/", maxAge: 60 * 60 * 24 } );
+            }
+        }
+        viewed_products = data_view;
+
+        // Check product stock
+        const show_stock = [0, 1].includes(site.settings.config.show_stock);
+        if (show_stock && product_data.stock && product_data.stock !=='No disponible') {
+            stock_data = product_data.stock;
+        }
+
+    } else {
+        // return Response.redirect("/producto-no-encontrado", 302);
+    }
+} catch (error) {
+    console.error("Error al obtener detalle del producto:", error.message);
+    // return Response.redirect("/producto-no-encontrado", 302);
+}
+---
+
+<Layout title={title}>
+    <SeoMeta slot="seo" />
+    {template === "grouped" ? (
+        <ProductGrouped site={site} active_user={active_user} data={product} stock_data={stock_data} viewed_products={viewed_products} />
+    ):(
+        <ProductDetail site={site} active_user={active_user} data={product} stock_data={stock_data} viewed_products={viewed_products} />
+    )}
+</Layout>

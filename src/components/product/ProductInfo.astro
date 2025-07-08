@@ -1,0 +1,79 @@
+---
+const { data } = Astro.props;
+
+function formatPrinting(printing) {
+  if (!Array.isArray(printing)) return '';
+  return printing.map(p => p.name_printing).join(', ');
+}
+---
+<div class="product_container container">
+  <div class="row mt-5">
+    <div class="col-12 mb-2" data-aos="flip-up">
+      <h5 class="secondary-font" style="font-weight: 700; color: #979797;">INFORMACIÓN DEL PRODUCTO</h5>
+    </div>
+
+    <div class="col-lg-6 mb-3 mb-lg-0" data-aos="fade-up">
+      <div class="row">
+        {data.printing && data.printing.length > 0 && (
+          <>
+            <div class="col-5 col-lg-4 product_info"><p><strong>IMPRESIÓN:</strong></p></div>
+            <div class="col-7 col-lg-8 product_info"><p>{formatPrinting(data.printing)}</p></div>
+          </>
+        )}
+        {data.size_printing && (
+          <>
+            <div class="col-5 col-lg-4 product_info"><p><strong>ÁREA IMPRESIÓN:</strong></p></div>
+            <div class="col-7 col-lg-8 product_info"><p>{data.size_printing}</p></div>
+          </>
+        )}
+        {data.material && (
+          <>
+            <div class="col-5 col-lg-4 product_info"><p><strong>MATERIAL:</strong></p></div>
+            <div class="col-7 col-lg-8 product_info"><p>{data.material}</p></div>
+          </>
+        )}
+        {data.width_p && (
+          <>
+            <div class="col-5 col-lg-4 product_info"><p><strong>ANCHO PRODUCTO:</strong></p></div>
+            <div class="col-7 col-lg-8 product_info"><p>{data.width_p}</p></div>
+          </>
+        )}
+        {data.height_p && (
+          <>
+            <div class="col-5 col-lg-4 product_info"><p><strong>ALTO PRODUCTO:</strong></p></div>
+            <div class="col-7 col-lg-8 product_info"><p>{data.height_p}</p></div>
+          </>
+        )}
+      </div>
+    </div>
+
+    <div class="col-lg-6" data-aos="fade-up">
+      <div class="row">
+        {data.qty_package && (
+          <>
+            <div class="col-5 col-lg-5 product_info"><p><strong>CANTIDAD EMPAQUE:</strong></p></div>
+            <div class="col-7 col-lg-7 product_info"><p>{Number(data.qty_package).toLocaleString('es-MX')}</p></div>
+          </>
+        )}
+        {data.height_package && (
+          <>
+            <div class="col-5 col-lg-5 product_info"><p><strong>ALTO EMPAQUE:</strong></p></div>
+            <div class="col-7 col-lg-7 product_info"><p>{data.height_package}</p></div>
+          </>
+        )}
+        {data.width_package && (
+          <>
+            <div class="col-5 col-lg-5 product_info"><p><strong>ANCHO EMPAQUE:</strong></p></div>
+            <div class="col-7 col-lg-7 product_info"><p>{data.width_package}</p></div>
+          </>
+        )}
+        {data.package_weight && (
+          <>
+            <div class="col-5 col-lg-5 product_info"><p><strong>PESO EMPAQUE:</strong></p></div>
+            <div class="col-7 col-lg-7 product_details"><p>{data.package_weight}</p></div>
+          </>
+        )}
+      </div>
+    </div>
+  </div>
+</div>

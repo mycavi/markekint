@@ -1,0 +1,85 @@
+---
+import { Renders } from '../server/js/components/theme.js';
+const { site, active_user, categories } = Astro.props;
+import { detectDevice } from '../server/js/helpers.js';
+const device = detectDevice(Astro.request);
+
+const showPrice = site.settings.config.show_price === 1 || (site.settings.config.show_price === 0 && active_user);
+let select;
+
+try {
+    const render = new Renders(site);
+    select = render.searchSelect(categories);
+} catch (error) {
+    console.error(error);
+}
+---
+
+<div id="sidebar-search" class={`sidebar sidebar_search sidebar-search--${site.settings.design.sidebar_search} ${device.isSmall? 'responsive' : ''} transition-ease shadow`} >
+    <div class="sidebar_body">
+        <form id="search" class="mt-3">
+            <div class="form-group mb-3">
+                <label class="font-small" for="word">BUSCAR</label>
+                <input type="search" class="form-control" placeholder="" id="word" />
+            </div>
+
+            <div class="sidebar__categories_box form-group mb-3">
+                <p class="secondary-font"><strong>BÚSQUEDA AVANZADA</strong></p>
+                <label class="font-small" for="category">CATEGORÍA</label>
+                <select class="form-select" id="category" set:html={select}></select>
+            </div>
+
+            <div class="sidebar__colors_box form-group mb-3">
+                <label class="font-small mb-2">COLORES</label>
+                <div id="category_colors" class="sidebar__colors">
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                    <label class="color_box color_box--sidebar gris"></label>
+                </div>
+            </div>
+
+            { showPrice ? (
+                    <div class="row align-items-end">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="font-small" for="price_min"> PRECIO DESDE </label>
+                                <input type="number" class="form-control" min="0" value="0" id="price_min" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="font-small" for="price_max"> HASTA </label>
+                                <input type="number" class="form-control" min="0" value="0" id="price_max" />
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <input type="hidden" min="0" value="0" id="price_min" />
+                        <input type="hidden" min="0" value="0" id="price_max" />
+                    </>
+                )
+            }
+
+            <div class="form-group mb-5">
+                <button type="submit" class="btn btn-sm btn-mycavi w-100"> <i class="bi bi-search me-2"></i>BUSCAR </button>
+            </div>
+        </form>
+    </div>
+</div>

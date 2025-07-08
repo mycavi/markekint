@@ -1,0 +1,91 @@
+---
+import { config } from '../server/js/config.js';
+import GlobalStyles from '../components/GlobalStyles.astro'; 
+import GlobalTheme from '../components/GlobalTheme.astro'; 
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Search from '../components/Search.astro';
+import Cart from '../components/Cart.astro';
+import Modals from '../components/Modals.astro';
+import "../server/css/app.css";
+
+const currentUrl = Astro.url.href;
+const { site, categories, active_user, user, admin_access} = Astro.locals;
+const { title } = Astro.props;
+
+// Tipo de contenedor de acuerdo al tipo de sidebar search
+const content_search = {
+  static: "normal",
+  hidden: "full",
+};
+---
+<html lang="es-mx">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+		<meta name="robots" content="index, follow"/>
+		<meta name="theme-color" content={`${site.settings.design.main_color}`}/>
+		<link rel="shortcut icon" href={`${site?.favicon_site ?? ''}`}>
+		<meta property="og:type" content="website" />
+		<meta name="title" content={`${title} | ${config.app_name}`} />
+		<meta property="og:title" content={`${title} | ${config.app_name}`} />
+		<meta name="twitter:title" content={`${title} | ${config.app_name}`} />
+		<meta property="og:site_name" content={config.app_name} />
+		<meta property="og:url" content={currentUrl} />
+		<meta property="fb:app_id" content={currentUrl} />
+		<meta name="author" content="MyCavi" />
+		<slot name="seo" /> <!-- Dynamic Meta Tags -->
+		<title>{`${title} | ${config.app_name}`}</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet preload" as="style" />
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css" rel="stylesheet preload" as="style" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" />
+		<!-- <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> -->
+		<slot name="styles"/>
+		<GlobalStyles site={site}/>
+	</head>
+	<body>
+		<div id="overlay-alert"></div>
+		<Header site={site} active_user={active_user} categories={categories} />
+		<main id="app" style="margin-top: 104px;">
+			<!-- cart -->
+			<Cart site={site} active_user={active_user}/>
+			<!-- search -->
+			<Search site={site} active_user={active_user} categories={categories}/>
+
+			<div id="section" data-aos="fade-up" class={`main_container main_container--${content_search[site.settings.design.sidebar_search]}`} style="overflow-x: hidden;">
+				<div class="page_container">
+					<slot/>
+				</div>
+				<Footer site={site} config={config}/>
+			</div>
+
+			{admin_access && (
+				<a id="toadmin" href={`https://admin.mycavi.com/${site.code_site}`} target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Abrir Administrador">
+					<img src="https://mycavi.com/public/mycavi_icon.png" alt="Administrador MyCavi" width="25px" />
+				</a>
+			)}
+			<div id="totop" class="btn-mycavi"><i class="bi bi-chevron-up"></i></div>
+		</main>
+		<!-- MODALS --> 
+		<slot name="modals"/>
+		<Modals logotype={site.logo_site} app_name={config.app_name} active_user={active_user} whats_app={site.notifications_whats_app} />
+	</body>
+
+	<GlobalTheme site={site} config={config} user={user} active_user={active_user}/>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" defer></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+	<!-- <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script> -->
+	{active_user && ( <script type="text/javascript" src="/js/moment-with-locales.js"></script> )}
+	<slot name="libraries"/>
+	<script src={`/js/functions.js?v=${Date.now()}`}></script>
+	<script type="module" src={`/js/app.js?v=${Date.now()}`}></script>
+	{!active_user && ( 
+		<script type="text/javascript" src="/js/js-form-validator.js"></script>
+		<script type="text/javascript" src="/js/no-session-forms.js"></script>
+	)}
+	<slot name="scripts"/>
+</html>

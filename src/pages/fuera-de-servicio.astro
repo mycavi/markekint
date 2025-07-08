@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es-mex">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fuera de servicio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;800&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?family=FontAwesome&display=swap" rel="stylesheet preload">
+    <style>
+        body{ font-size: 16px; }
+        h1, h2, p{ font-family: "Poppins", sans-serif; }
+        h1{ font-weight: 800; }
+        .error-title{
+            font-size: 2rem;
+            margin: 20px 0;
+            color: #532173;
+        }
+        @media screen and (max-width: 992px) {
+            .col__left{ text-align: center; }  
+            .img_page{ max-width: 500px; width: 100%;}
+        }
+        @media screen and (min-width: 992px) {
+            .error-title{ font-size: 3rem; } 
+            .main_container{
+                align-items:center;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main_container row align-items-center">
+            <div class="col__left col-12 col-lg-5 offset-lg-1 py-4">
+                <h1 class="error-title">Sitio en proceso de mantenimiento</h1>
+                <p class="">Lamentamos las molestias ocasionadas y te invitamos a regresar pronto para disfrutar de las novedades.</p>
+                <h4>¡Apreciamos tu paciencia!</h4>
+            </div>
+            <div class="col__right col-12 col-lg-6 text-center">
+                <img src="https://mycavi.com/public/broken.gif" alt="Fuera de servicio" class="img_page img-fluid">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

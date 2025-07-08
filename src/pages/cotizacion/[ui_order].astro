@@ -1,0 +1,172 @@
+---
+import { config } from "../../server/js/config.js";
+import { formatNumber } from "../../server/js/helpers.js";
+import Layout from "../../layouts/Layout.astro";
+import SeoMeta from "../../components/SeoMeta.astro";
+import "../../server/css/profile.css";
+import axios from 'axios';
+
+const { site} = Astro.locals;
+const dynamicKey = Astro.cookies.get("dinamic_key")?.value;
+const customerToken = Astro.cookies.get("customer")?.value;
+const ui_order = Astro.params.ui_order;
+let order = null;
+let detail = [];
+let notFound = false;
+
+try {
+    const { data } = await axios.post(`${config.api_url}/order/detail`, { token: dynamicKey, customer_token: customerToken, ui_order: ui_order });
+
+    if (data.status) {
+        order = data.order;
+        detail = data.detail;
+    } else {
+        notFound = true;
+    }
+} catch (error) {
+    notFound = true;
+}
+
+if (notFound) {
+  return Response.redirect('/order-not-found/' + ui_order, 302);
+}
+---
+
+<Layout title=`Cotización ${order.id}`>
+    <SeoMeta slot="seo" />
+
+    <div class="order__data">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-8 col-lg-7">
+            <h1 class="order__ttl secondary-font" data-aos="flip-up"><span class="order__ttl color-mycavi">Cotización</span> {order.id}</h1>	
+            <p class="order__status alert alert-success" role="alert"><strong>Estatus:</strong> {order.description}</p>
+          </div>
+          <div class="col-4 col-lg-5 text-end">
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+              <div class="btn-group" role="group">
+                <button id="btnDownloads" type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Descargas</button>
+                <div class="dropdown-menu" aria-labelledby="btnDownloads">
+                  <a class="dropdown-item" href={`/download/order-excel/${order.ui_order}`} target="_blank">Excel</a>
+                  <a class="dropdown-item" href={`/download/order-pdf/${order.ui_order}`} target="_blank">PDF</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <hr />
+            {(order.phone_contact || order.street) && (
+              <>
+                <p class="mb-0"><strong class="order__subttl txt_tiny txt_info">Datos de contacto </strong></p>
+                {order.phone_contact && <p class="mb-0"><i class="order__icon color-mycavi bi bi-telephone-fill"></i> {order.phone_contact}</p>}
+                {order.street && (
+                  <p class="mb-0">
+                    <i class="order__icon color-mycavi bi bi-geo-alt-fill"></i> Calle {order.street}, No. {order.num_ext},
+                    {order.num_int && ` No.Int ${order.num_int},`} Colonia {order.col}, C.P {order.cp}
+                  </p>
+                )}
+              </>
+            )}
+            <p class="my-2"><strong class="order__subttl">Fecha</strong><br /><i class="order__icon color-mycavi bi bi-calendar-fill"></i> {order.created_date}</p>
+            {'total' in order && <p class="mb-0"><strong class="order__subttl">Total</strong><br /><i class="order__icon color-mycavi bi bi-currency-exchange"></i> ${formatNumber(order.total)}</p>}
+            {order.note && <p class="mb-0"><strong class="order__subttl">Nota</strong><br /><i class="order__icon color-mycavi bi bi-stickies-fill"></i> {order.note}</p>}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-12 mb-5">
+          <h5 class="secondary-font mb-4 text-secondary">Productos</h5>
+          <table id="products" class="table table-striped table-bordered table-responsive-sm">
+            <thead>
+              <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                {site.settings.config.show_by_model === 1 && <th>Color</th>}
+                <th>Descripción</th>
+                <th>Técnica de impresión</th>
+                {'price' in order && <th>Precio</th>}
+                <th>Cantidad</th>
+                {'subtotal' in order && <th>Subtotal</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {detail.map((product) => (
+                <tr>
+                  <td><img src={product.imagen} onError={(e) => (e.currentTarget.src = 'https://mycavi.com/public/no-disponible.jpg')} alt={product.name} width="80" height="80" /></td>
+                  <td>
+                    <strong class="color-mycavi">{product.code_product}</strong>
+                    <p class="mb-0" style="font-size: 14px;">{product.name}</p>
+                  </td>
+                  {site.settings.config.show_by_model === 1 && <td>{product.color_provider}</td>}
+                  <td width="40%">
+                    {product.description}
+                    {product.note && <p class="mb-0 mt-2"><span class="badge text-bg-warning fw-bold">Nota:</span> {product.note}</p>}
+                  </td>
+                  <td>
+                    {product.name_printing && <strong class="mb-0" style="font-size: 14px;">{product.name_printing}</strong>}
+                    {'printing_price' in product && <p class="mb-0" style="font-size: 14px;">${formatNumber(product.printing_price)}</p>}
+                  </td>
+                  {'price' in order && <td>${formatNumber(product.price)}</td>}
+                  <td class="text-center">{product.qty.toLocaleString("es-MX", { maximumFractionDigits: 0 })}</td>
+                  {'subtotal' in order && <td>${(product.subtotal)}</td>}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+</Layout>
+
+<Fragment slot="libraries">
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+</Fragment>
+
+<Fragment slot="scripts">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  $('#products').DataTable({
+    stateSave: true,
+    language: {
+      url: theme.site.url + '/js/lang.json'
+    }
+  });
+});
+</script>
+</Fragment>
+
+<style>
+    .order__data{
+        padding: 25px 28px;
+        background: #f3f2f2;
+        margin-bottom: 1rem;
+    }
+    .order__ttl{
+        font-size: 21px;
+        font-weight: 600;
+        margin: 0;
+    }
+    .order__status{
+        border-radius: 22px;
+        margin: 6px 0 0 0;
+        font-size: 13px;
+        display: inline-block;
+        border: none;
+        padding: 2px 18px;
+    }
+    .order__subttl{
+        font-size: 12px;
+        font-weight: 600;
+        color: #787878;
+    }
+    @media (min-width: 767px) { 
+        .order__data { padding: 35px 3rem; }
+    }
+</style>

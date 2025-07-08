@@ -1,0 +1,49 @@
+---
+const { site, active_user } = Astro.props;
+const price_show = site.settings.config.show_price;
+---
+
+<div id="cart" class={`sidebar responsive sidebar-cart sidebar-cart--full sidebar-${site.settings.snippet.cart_style} transition-ease p-4`}>
+  <div class="sidebar-cart--header">
+    <h5 class="color-mycavi bold"> CARRITO 
+      <span id="detail_count" class="d-none"> <i class="bi bi-cart me-2"></i><strong id="total_detail">0</strong> </span>
+    </h5>
+    <span id="close_cart"><i class="bi bi-x-lg" aria-hidden="true"></i></span>
+  </div>
+
+  <div class="sidebar-cart--body" id="details_cart">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-muted" scope="col">Producto</th>
+            <th class={`text-muted ${(price_show === 2 || price_show === 0 && !active_user) ? 'd-none' : ''}`} scope="col">Precio</th>
+            <th class="text-muted" scope="col">Cantidad</th>
+            <th class="text-muted" scope="col">Decorado</th>
+            <th class="text-muted" scope="col">Nota</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody id="details" class="px-3"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sidebar-cart--footer p-3">
+    <div class="row justify-content-end">
+      <div class="col-lg-2 mt-2">
+        {(price_show === 1 || (price_show === 0 && active_user)) ? (
+          <div class="d-flex mb-2">
+            <p class="mb-0 me-3 fw-bold">TOTAL</p>
+            <p class="mb-0 fw-bold color-mycavi">
+              $<span id="total_cart" class="fw-bold"></span>
+            </p>
+          </div>
+        ) : (
+          <></>
+        )}
+        <button type="button" class="btn btn-sm btn-mycavi py-2 px-5" onclick="CheckCart(this);"><strong>COTIZAR</strong></button>
+      </div>
+    </div>
+  </div>
+</div>

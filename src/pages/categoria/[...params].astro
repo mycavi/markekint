@@ -1,0 +1,52 @@
+---
+import axios from 'axios';
+import { config } from '../../server/js/config.js';
+import Layout from "../../layouts/Layout.astro";
+import SeoMeta from "../../components/SeoMeta.astro";
+
+const {site,  active_user } = Astro.locals;
+const dynamicKey = Astro.cookies.get("dinamic_key")?.value;
+
+const url = new URL(Astro.request.url);
+const pathSegments = url.pathname.replace(/^\/categoria\//, '').split('/');
+
+const [ category = 'todo', order = 'predeterminado', view = '24', page = '1' ] = pathSegments;
+const dataPost = { token: dynamicKey,category, order, show: view, page };
+dataPost.color = 'todo';
+if (active_user) {
+  dataPost.customer_token = Astro.cookies.get("customer")?.value;
+}
+const filters = { category, order, show: view, page };
+
+let category_data = null;
+try {
+  const response = await axios.post(`${config.api_url}/category/detail`, { token: dynamicKey, code_category: category });
+  category_data = response.data.data;
+} catch (error) {
+  console.error('Error al obtener categoría:', error);
+}
+const page_seo = {
+  seo_description : category_data.description,
+  seo_keywords : category_data.keywords
+}
+---
+<Layout title={category_data.name}>
+    <SeoMeta slot="seo" page={page_seo}/>
+    <div class="container">
+        <div class="row align-items-center pt-3">
+            <div class="col-12">
+                <h1 class="secondary-font color-mycavi mb-4" data-aos="flip-up">{category_data.name}</h1>
+            </div>
+        </div>
+        <div id="filter_box_top" class="filter_box filter_box--top" data-aos="flip-up"> </div>
+        <hr>
+        <div id="products_box" class="row"></div>
+        <hr>
+        <div id="filter_box_bottom" class="filter_box filter_box--bottom mb-4" data-aos="flip-up"></div>
+    </div>
+</Layout>
+
+<Fragment slot="scripts">
+  <script type="application/json" id="filters-data" set:html={JSON.stringify({ dataPost, filters })}></script>
+  <script type="module" src={`/js/page-category.js`}></script>
+</Fragment>
