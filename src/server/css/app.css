@@ -250,7 +250,7 @@ a,a:hover{text-decoration: none; color: inherit}
   align-items: center;
   overflow: hidden;
 }
-.pvw-product-image img{
+.pvw-product-image img, .product__img img{
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
@@ -361,7 +361,7 @@ a,a:hover{text-decoration: none; color: inherit}
 }
 .category-link:last-child::after { content: ''; }
 .product_container strong{font-weight: bold;}
-.product__img{position: relative;display: block;}
+.product__img{position: relative;display: block;aspect-ratio: 1 / 1;}
 .product__icon_zoom{position: absolute; bottom: 11px; right: 9px;font-size: 18px; opacity: 0.8;z-index: 99;}
 .product__gallery_list{
     backdrop-filter: blur(2px);
@@ -542,7 +542,7 @@ table.table{ width: 100% !important; border-radius: 5px; overflow: hidden; }
 #totop i{font-size: 15px;}
 
 .color_box.amarillo{ background-color:  #F9F50C;}
-.color_box.azul{ background-color:  #006CBA ;}
+.color_box.azul, .color_box.azul-dama{ background-color:  #006CBA ;}
 .color_box.beige{ background-color:  #ECE4B0}
 .color_box.blanco{ background-color:  #FFFFFF}
 .color_box.cafe{ background-color: #9B4A04 }
@@ -577,7 +577,7 @@ table.table{ width: 100% !important; border-radius: 5px; overflow: hidden; }
   background: linear-gradient(90deg, rgba(205, 170, 20, 1) 23%, rgba(255, 226, 0, 1) 49%, rgba(208, 153, 36, 1) 79%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#cdaa14", endColorstr="#d09924", GradientType=1);
 }
-.color_box.plata, .color_box.acero, .color_box.aluminio{
+.color_box.plata,.color_box.plata-dama,.color_box.plata-caballero, .color_box.acero, .color_box.aluminio, .color_box.titanio{
   background: rgb(135, 135, 135);
   background: -moz-linear-gradient(90deg, rgba(135, 135, 135, 1) 25%, rgba(166, 169, 170, 1) 51%, rgba(136, 136, 136, 1) 75%);
   background: -webkit-linear-gradient(90deg, rgba(135, 135, 135, 1) 25%, rgba(166, 169, 170, 1) 51%, rgba(136, 136, 136, 1) 75%);
