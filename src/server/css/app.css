@@ -244,10 +244,16 @@ a,a:hover{text-decoration: none; color: inherit}
   max-width: 500px;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #fbfbfb;
+  background-color: #fbfbfb;
   position: relative;
   display: flex;
   align-items: center;
+  overflow: hidden;
+}
+.pvw-product-image img{
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 .pvw-product{min-height: 350px;}
 .pvw-product, .user_session ,.add-address,.user_address{
@@ -303,7 +309,7 @@ a,a:hover{text-decoration: none; color: inherit}
 .pvw-product:hover .pvw-product-2--btn,.pvw-product:hover .pvw-product-3--btn{opacity: 1;}
 .pvwProduct_color{width: 15px; height: 15px; margin-right: 3px;}
 
-.pvw-product-image,.pvw-product--btn--loader{background: #d9d9d9 !important;}
+.pvw-product-image,.pvw-product--btn--loader{background-color: #d9d9d9 !important;}
 .pvw-product--btn--loader{color: #878787;}
 /* CART's*/
 .sidebar-cart{width: 340px;}

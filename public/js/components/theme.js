@@ -174,7 +174,7 @@ export class Theme extends Renders {
         if (Theme.show_prices && data.sale_price) additional_data += `<div class="${class_price} text-end"><p class="pvw-product-1--price">$${formatNumber(data.sale_price)}</p></div>`;
         return `<div class="pvw-product pvw-product-1 transition-ease">
             <a type="button" onclick="showPreview('${data.code_product}')" class="pvw-product-image">
-                <img loading="lazy" class="w-100 scroll__image" load="false" src="${img}" data-src="${data.imagen}" onerror=this.src="${UNAVAILABLE}" alt="${data.name_product}">
+                <img loading="lazy" class="w-100" load="false" src="${img}" data-src="${data.imagen}" onerror=this.src="${UNAVAILABLE}" alt="${data.name_product}">
             </a>
             <div class="pvw-product-data">
                 <a type="button" onclick="showPreview('${data.code_product}')" class="pvw-product--name pvw-product-1--name secondary-font">${data.name_product}</a>
